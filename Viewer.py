@@ -137,6 +137,12 @@ class Viewer(QWidget):
     def addSignal(self, signal: Signal):
         if signal.isShown: 
             self.signals.append(signal)
+            
+            #choose color based on channel number 
+
+            #color = signal.colors[0] if signal.channels[0] == 1 else signal.colors[1]
+            #plot_curve = self.plot_widget.plot(pen=pg.mkPen(color))
+
             plot_curve = self.plot_widget.plot(pen=pg.mkPen(signal.colors[1])) 
             self.plot_curves.append(plot_curve)
             self.current_indices[signal.name] = 0 
