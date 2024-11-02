@@ -38,6 +38,7 @@ class Selector(QWidget):
 
 
         print("Elements created")
+
     def stylingUI(self):
         self.setAttribute(Qt.WA_StyledBackground, True)
         self.setStyleSheet("background-color:#242424;color: #76D4D4; font-family: Sofia sans;")
@@ -47,27 +48,54 @@ class Selector(QWidget):
                                                 font-weight: 600;
                                                 font-size: 18px;
                                                 padding-left: 15px;""")
-        #Table
+        # Table
         self.table.verticalHeader().setVisible(False)
-        self.table.horizontalHeader().setStyleSheet(""" QHeaderView::section{ 
-                                                        background-color:#242424;
-                                                        font-size:12px; 
-                                                        color:#7c7c7c;
-                                                        border:none;
-                                                        border-bottom:1px solid #76D4D4;
-                                                        text-align: left;}""")
+        self.table.setSelectionBehavior(QTableWidget.SelectItems)
+        self.table.setSelectionMode(QTableWidget.SingleSelection)
+        self.table.setFocusPolicy(Qt.NoFocus)
+
+        # Set the stylesheet to customize the table and headers
+        self.table.setStyleSheet("""
+            QTableWidget {
+                background-color: #242424;
+                color: #EFEFEF;
+                border: none;
+            }
+            QTableWidget::item {
+                background-color: #242424;  
+                color: #EFEFEF;
+                border:none;
+            }
+            QTableWidget::item:selected {
+                background-color: #242424;  
+                color: #EFEFEF;
+                border:none;
+            }
+            QHeaderView::section {
+                background-color: #242424;
+                font-size: 12px; 
+                color: #7c7c7c;
+                border: none;
+                border-bottom: 1px solid #76D4D4;
+                text-align: left;
+                font-weight: normal;  
+            }
+            QTableWidget::item:focus {
+            outline: none:
+        }
+        """)
 
         self.table.setShowGrid(False)
-        # self.table.setColumnWidth(0 , 3)
-        self.table.setStyleSheet("""color:#EFEFEF; border:none;""")
         self.table.setColumnWidth(0, 1)
         self.table.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
         self.table.horizontalHeader().setSectionResizeMode(2, QHeaderView.Stretch)
-        self.table.setColumnWidth(3 , int(480*.1))
-        self.table.setColumnWidth(4 , int(480*.1))
+        self.table.setColumnWidth(3, int(480 * .1))
+        self.table.setColumnWidth(4, int(480 * .1))
 
         for i in range(self.table.horizontalHeader().count()):
             self.table.horizontalHeaderItem(i).setTextAlignment(Qt.AlignLeft)
+
+        self.table.update()
         print("Elements is styled")
 
     def layoutSet(self):
@@ -86,7 +114,9 @@ class Selector(QWidget):
         print("layout set")
 
     def connectingUI(self):
+        self.table.itemClicked.connect(self.on_item_clicked)
         print("UI panels is connected to each other")
+
 
 
     def createSignalElement(self, signal):
@@ -125,6 +155,11 @@ class Selector(QWidget):
             self.table.setCellWidget(row, 4, switchButton)
 
         print("signals are placed")
+
+    def on_item_clicked(self, item):
+        row = item.row()
+        self.table.selectRow(row)
+        print(f"Selected row: {row}")
 
     def toggleSwitch(self, button, signal):
         if signal.channels == [1,1]:
