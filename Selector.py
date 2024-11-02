@@ -2,6 +2,7 @@ import sys
 
 import numpy as np
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QLabel, QTableWidget, QVBoxLayout, QHBoxLayout, \
     QTableWidgetItem, QPushButton, QHeaderView
 
@@ -10,16 +11,17 @@ from Signal import Signal
 
 class Selector(QWidget):
 
-    def __init__(self):
+    def __init__(self,id = 0):
         super().__init__()
         print(f"{self}initialized")
-        self.initializeAttributes()
+        self.initializeAttributes(id)
         self.initializeUI()
         self.connectingUI()
 
 
-    def initializeAttributes(self):
+    def initializeAttributes(self, id):
         self.signals = []
+        self.selectorId = id
     def initializeUI(self):
         print("UI initialized")
         self.createUIElements()
@@ -89,40 +91,56 @@ class Selector(QWidget):
 
     def createSignalElement(self, signal):
         print("signal is created into ui")
-    def  placeSignalElements(self):
+
+    def placeSignalElements(self):
         self.table.setRowCount(len(self.signals))
-        for row ,signal in enumerate(self.signals):
+        for row, signal in enumerate(self.signals):
             colorPreview = QPushButton()
             colorPreview.setStyleSheet(f"background-color:{signal.colors[0]};")
             colorPreview.setFixedWidth(5)
             colorPreview.setEnabled(False)
 
-            colorHolder =QHBoxLayout()
+            colorHolder = QHBoxLayout()
             colorHolder.addWidget(colorPreview)
             colorHolder.setContentsMargins(0, 0, 0, 0)
 
-            colorWidget =QWidget()
+            colorWidget = QWidget()
             colorWidget.setLayout(colorHolder)
 
-            self.table.setCellWidget(row, 0,colorWidget)
+            self.table.setCellWidget(row, 0, colorWidget)
             self.table.setItem(row, 1, QTableWidgetItem(signal.name))
             self.table.setItem(row, 2, QTableWidgetItem(signal.location))
 
-            hideButton = QPushButton("H")
-            hideButton.clicked.connect(lambda checked, button=hideButton, signal = self.signals[row]: self.toggleHide(button,signal))
-            switchButton = QPushButton("S")
+            hideButton = QPushButton()
+            hideButton.setIcon(QIcon("Assets/Selector/shown.png"))
+            hideButton.clicked.connect(
+                lambda checked, button=hideButton, selectSignal=signal: self.toggleHide(button, selectSignal))
+
+            switchButton = QPushButton()
+            switchButton.setIcon(QIcon("Assets/Selector/swap.png"))
+            switchButton.clicked.connect(
+                lambda checked, button=switchButton, selectSignal=signal: self.toggleSwitch(button, selectSignal))
 
             self.table.setCellWidget(row, 3, hideButton)
             self.table.setCellWidget(row, 4, switchButton)
 
-        print("signals is placed")
+        print("signals are placed")
 
+    def toggleSwitch(self, button, signal):
+        if signal.channels == [1,1]:
+            return
+        else:
+            signal.channels = [1,1]
+            signal.channels[self.selectorId] = 0
+            self.signals.remove(signal)
+            self.placeSignalElements()
+        print(signal.channels)
     def toggleHide(self, button, signal):
-        if button.text() =="H":
-            button.setText("h")
+        if signal.isShown:
+            button.setIcon(QIcon("Assets/Selector/hidden.png"))
             signal.isShown = False
         else:
-            button.setText("H")
+            button.setIcon(QIcon("Assets/Selector/shown.png"))
             signal.isShown = True
 
         print(signal.name)
@@ -155,7 +173,7 @@ if __name__ == "__main__":
     value = 20 + 3 * np.sin(0.3 * time) + np.random.normal(0, 0.5,
                                                            len(time))  # Temperature fluctuating around 20°C with slight noise
     tempSignal.data = np.column_stack((time, value))
-    tempSignal.channels = [1,0]
+    tempSignal.channels = [1,1]
     tempSignal.colors = ["blue", "#Efefef"]  # color for channel 1
     tempSignal.isLive = False
     tempSignal.isShown = True
