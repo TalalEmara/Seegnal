@@ -275,6 +275,9 @@ if __name__ == "__main__":
     main = QMainWindow()
     viewer = Viewer()
 
+
+    viewer = Viewer()
+
     signal1 = Signal()
     signal1.name = "Heart Rate Monitor"
     signal1.location = "E/newFolder"
@@ -282,7 +285,7 @@ if __name__ == "__main__":
     value = 75 + 5 * np.sin(0.5 * time)
     signal1.data = np.column_stack((time, value))
     signal1.channels = [1, 2]
-    signal1.colors = ["#D55877", "#76D4D4"] 
+    signal1.colors = ["#D55877", "#76D4D4"]
     signal1.isLive = True
     signal1.isShown = True
 
@@ -292,7 +295,7 @@ if __name__ == "__main__":
     time = np.arange(0, 10, 0.1)
     value = 25 + 2 * np.sin(0.3 * time)
     signal2.data = np.column_stack((time, value))
-    signal1.colors = ["#D55877", "#76D4D4"] 
+    signal1.colors = ["#D55877", "#76D4D4"]
     signal1.isLive = True
     signal1.isShown = True
 
