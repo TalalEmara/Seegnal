@@ -1,8 +1,9 @@
 import sys
 
 import numpy as np
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QLabel, QTableWidget, QVBoxLayout, QHBoxLayout, \
-    QTableWidgetItem, QPushButton
+    QTableWidgetItem, QPushButton, QHeaderView
 
 from Signal import Signal
 
@@ -36,9 +37,31 @@ class Selector(QWidget):
 
         print("Elements created")
     def stylingUI(self):
+        self.setAttribute(Qt.WA_StyledBackground, True)
+        self.setStyleSheet("background-color:#242424;color: #76D4D4; font-family: Sofia sans;")
+
+        self.selectorNameLabel.setStyleSheet("""color: #76D4D4;
+                                                font-family: Sofia sans;
+                                                font-weight: 600;
+                                                font-size: 18px;
+                                                padding-left: 15px;""")
         #Table
         self.table.verticalHeader().setVisible(False)
+        self.table.horizontalHeader().setStyleSheet(""" QHeaderView::section{ 
+                                                        background-color:#242424;
+                                                        font-size:12px; 
+                                                        color:#7c7c7c;
+                                                        border:none;
+                                                        border-bottom:1px solid #76D4D4;}""")
+
         self.table.setShowGrid(False)
+        self.table.setColumnWidth(0 , int(480*.05))
+        self.table.setStyleSheet("""border:none;""")
+        # self.table.setColumnWidth(1 , 480*.3)
+        self.table.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
+        self.table.setColumnWidth(2 , int(480*.4))
+        self.table.setColumnWidth(3 , int(480*.1))
+        self.table.setColumnWidth(4 , int(480*.1))
         print("Elements is styled")
 
     def layoutSet(self):
@@ -115,7 +138,7 @@ if __name__ == "__main__":
 
     main.setCentralWidget(selector)
 
-    main.resize(int(1440/3), 720)
+    main.resize(480, 360)
     main.show()
     sys.exit(app.exec_())
 
