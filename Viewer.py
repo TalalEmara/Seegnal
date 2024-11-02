@@ -237,7 +237,7 @@ if __name__ == "__main__":
     signal.isLive = True
     signal.isShown = True
 
-viewer = Viewer()
+    viewer = Viewer()
     main.setCentralWidget(viewer)
 
     main.resize(750, 400)
