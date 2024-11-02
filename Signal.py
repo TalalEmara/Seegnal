@@ -4,6 +4,10 @@ class Signal:
         self.location = ""
         self.data = ""
         self.channels = [1,0]
-        self.colors = ["red", "#242424"] #color in channel1 , color in channel 2
+        self.colors = ["#D55877", "#76D4D4"] #color in channel1 , color in channel 2
         self.isLive = False
         self.isShown = True
+
+
+
+        
