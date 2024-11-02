@@ -11,7 +11,7 @@ from Styles.viewerStyles import (
     rewindOnButtonStyle,
     labelStyle,
     background,
-    panSlider
+    panSliderStyle
 )
 
 from PyQt5.QtCore import QTimer, Qt
@@ -34,7 +34,7 @@ class Viewer(QWidget):
         self.current_index = 0
         self.is_playing = True
         self.is_rewinding = False
-        self.plot_speed = 200
+        self.plot_speed = 150
         self.time_jump=5
         self.timer = QTimer()
         self.timer.timeout.connect(self.updatePlot)
@@ -42,6 +42,11 @@ class Viewer(QWidget):
         self.signals = [] 
         self.plot_curves = []  
         self.current_indices = {}
+        
+        self.pan_update_timer = QTimer()
+        self.pan_update_timer.setInterval(100)  
+        self.is_panning = False
+
 
     def initializeUI(self):
     
@@ -64,9 +69,9 @@ class Viewer(QWidget):
         self.rewindButton = QPushButton(self.signalViewer)
         self.rewindButton.setCheckable(True)
         # self.addSignalButton = QPushButton("Add Signal", self.signalViewer) #trial adding signal button
-        self.slider = QSlider(Qt.Horizontal, self.signalViewer)
-        self.slider.setRange(0, 100)
-        self.slider.setValue(0)
+        self.panSlider = QSlider(Qt.Horizontal, self.signalViewer)
+        self.panSlider.setRange(0, 100)
+        self.panSlider.setValue(0)
         self.plot_widget = pg.PlotWidget()
 
     def stylingUI(self):
@@ -80,8 +85,8 @@ class Viewer(QWidget):
         self.forwardButton.setIcon(QtGui.QIcon("Assets/ControlsButtons/forward.png"))
         self.rewindButton.setIcon(QtGui.QIcon("Assets/ControlsButtons/rewindOff.png"))
         self.rewindButton.setStyleSheet(rewindOffButtonStyle)
-        self.slider.setMinimumWidth(100)
-        self.slider.setMaximumWidth(400)
+        self.panSlider.setMinimumWidth(100)
+        self.panSlider.setMaximumWidth(400)
         self.plot_widget.setBackground('#242424')
         self.signalViewer.setFrameShape(QFrame.StyledPanel)
         self.signalPlotLayout.setContentsMargins(5, 5, 5, 5)
@@ -92,7 +97,7 @@ class Viewer(QWidget):
         self.forwardButton.setStyleSheet(signalControlButtonStyle)
         self.backwardButton.setStyleSheet(signalControlButtonStyle)
         self.rewindButton.setStyleSheet(rewindOffButtonStyle)
-        self.slider.setStyleSheet(panSlider)
+        self.panSlider.setStyleSheet(panSliderStyle)
         print("Elements are styled")
 
     def layoutSet(self):
@@ -112,7 +117,7 @@ class Viewer(QWidget):
         self.SignalbuttonsLayout.addWidget(self.forwardButton)
         self.SignalbuttonsLayout.addWidget(self.rewindButton)
         self.SignalbuttonsLayout.addStretch(1)
-        self.SignalbuttonsLayout.addWidget(self.slider)
+        self.SignalbuttonsLayout.addWidget(self.panSlider)
         self.SignalbuttonsLayout.addStretch(1)
         self.signalPlotLayout.addLayout(self.titleToolbarLayout)
         self.signalPlotLayout.addWidget(self.plot_widget)
@@ -131,15 +136,22 @@ class Viewer(QWidget):
         self.backwardButton.clicked.connect(self.backward)
         self.rewindButton.clicked.connect(self.toggleRewind)
         # self.addSignalButton.clicked.connect(self.addNewSignal)  #trial adding signal button
-        self.plot_widget.sigXRangeChanged.connect(self.adjustPlotLimits)
+        self.panSlider.valueChanged.connect(self.updatePanSlider)
+        self.pan_update_timer.timeout.connect(self.syncPanSlider)
+        self.plot_widget.sigXRangeChanged.connect(self.startPanUpdate)
+        # self.plot_widget.sigXRangeChanged.connect(self.adjustPlotLimits)
+        # self.plot_widget.sigYRangeChanged.connect(self.adjustPlotLimits)
+
         print("UI panels are connected to each other")
 
+   
+        
     def addSignal(self, signal: Signal):
         if signal.isShown: 
             self.signals.append(signal)
             
             #choose color based on channel number 
-
+            
             #color = signal.colors[0] if signal.channels[0] == 1 else signal.colors[1]
             #plot_curve = self.plot_widget.plot(pen=pg.mkPen(color))
 
@@ -176,12 +188,12 @@ class Viewer(QWidget):
                 self.current_indices[signal.name] = current_index
                 
         
-
             # Update time label with the maximum time
             self.timeLabel.setText(f"{int(max_time // 60):02}:{int(max_time % 60):02}.{int((max_time % 1) * 1000):03}")
             self.adjustPlotLimits()
 
 
+    #button functions 
     def play(self):
         if not self.is_playing:  
             self.is_playing = True
@@ -234,10 +246,12 @@ class Viewer(QWidget):
         self.plot_speed = max(1, 100 - value)  
         self.timer.setInterval(self.plot_speed)
         print("Speed is changed")
-            
+
+    #limits
     def adjustPlotLimits(self):
         time_min, time_max = self.plot_widget.viewRange()[0]
 
+        # Ensure time_min is not less than zero
         if time_min < 0:
             time_min = 0
 
@@ -248,13 +262,67 @@ class Viewer(QWidget):
                 current_time = signal.data[current_index, 0]
                 current_times.append(current_time)
 
+                # amplitude_data = signal.data[:current_index, 1]
+                # current_amplitudes.extend(amplitude_data)
+
+
+        # Update time_max based on current times from signals
         if current_times:
             current_max_time = max(current_times)
             time_max = max(time_max, current_max_time)
 
+        # if current_amplitudes:
+        #     y_min = min(current_amplitudes)
+        #     y_max = max(current_amplitudes)
+        #     padding = 0.1 * (y_max - y_min)  
+        #     self.plot_widget.setYRange(y_min - padding, y_max + padding)
+
+
+        # Set the x-range of the plot widget
         self.plot_widget.setXRange(time_min, time_max, padding=0)
 
+
+    #pan slider functions 
+    def updatePanSlider(self):
+        if not self.signals:
+            return
     
+        max_time = max(signal.data[-1, 0] for signal in self.signals if len(signal.data) > 0)
+
+        slider_position = self.panSlider.value() / 100  
+
+        time_range_span = self.plot_widget.viewRange()[0][1] - self.plot_widget.viewRange()[0][0]
+        time_start = slider_position * (max_time - time_range_span)
+        time_start = max(0, time_start)  
+        time_end = time_start + time_range_span
+
+        self.plot_widget.setXRange(time_start, time_end, padding=0)    
+    
+    def startPanUpdate(self):
+        if not self.is_panning:
+            self.is_panning = True
+            self.pan_update_timer.start()
+
+    def stopPanUpdate(self):
+        self.is_panning = False
+        self.pan_update_timer.stop()
+
+    def syncPanSlider(self):
+        if not self.signals:
+            return
+
+        time_start, time_end = self.plot_widget.viewRange()[0]
+        max_time = max(signal.data[-1, 0] for signal in self.signals if len(signal.data) > 0)
+        time_range_adjusted = max_time - (time_end - time_start)
+        if time_range_adjusted > 0: 
+            slider_position = (time_start / time_range_adjusted) * 100
+            self.panSlider.setValue(int(max(0, min(100, slider_position)))) 
+        else:
+            self.panSlider.setValue(0)
+        self.adjustPlotLimits()
+
+
+    #trial 
     # def addNewSignal(self): #Trial , to add multiple signals and test with it
     #     new_signal = Signal()
     #     new_signal.name = f"Signal {len(self.signals) + 1}" 
@@ -275,9 +343,6 @@ if __name__ == "__main__":
     main = QMainWindow()
     viewer = Viewer()
 
-
-    viewer = Viewer()
-
     signal1 = Signal()
     signal1.name = "Heart Rate Monitor"
     signal1.location = "E/newFolder"
@@ -285,7 +350,7 @@ if __name__ == "__main__":
     value = 75 + 5 * np.sin(0.5 * time)
     signal1.data = np.column_stack((time, value))
     signal1.channels = [1, 2]
-    signal1.colors = ["#D55877", "#76D4D4"]
+    signal1.colors = ["#D55877", "#76D4D4"] 
     signal1.isLive = True
     signal1.isShown = True
 
@@ -295,7 +360,7 @@ if __name__ == "__main__":
     time = np.arange(0, 10, 0.1)
     value = 25 + 2 * np.sin(0.3 * time)
     signal2.data = np.column_stack((time, value))
-    signal1.colors = ["#D55877", "#76D4D4"]
+    signal1.colors = ["#D55877", "#76D4D4"] 
     signal1.isLive = True
     signal1.isShown = True
 
