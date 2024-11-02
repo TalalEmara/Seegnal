@@ -1,10 +1,11 @@
 from PyQt5.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QFrame, QLabel, QPushButton, QSpacerItem, QSizePolicy, QSlider, QApplication
+    QWidget, QVBoxLayout, QHBoxLayout, QFrame, QLabel, QPushButton, QSpacerItem, QSizePolicy, QSlider, QApplication,
+    QMainWindow
 )
 import sys
-sys.path.append(r'E:\DSP\Seegnal\Styles')
 
-from viewerStyles import (
+
+from Styles.viewerStyles import (
     signalControlButtonStyle,
     rewindOffButtonStyle,
     rewindOnButtonStyle,
@@ -17,6 +18,8 @@ from PyQt5 import QtGui
 import pyqtgraph as pg
 import numpy as np
 
+from Signal import Signal
+
 class Viewer(QWidget):
     def __init__(self):
         super().__init__()
@@ -28,11 +31,11 @@ class Viewer(QWidget):
     def initializeAttributes(self):
         print("Attributes")
         self.viewer_name = "Channel 1"
-        self.plot_color = "#87EDF1"
+        #self.plot_color = "#87EDF1"  # NOT Viewer Attribute it is Signal Attribute
         self.plot_speed = 50
-        self.plot_thickness = 2
+        #self.plot_thickness = 2 # NOT Viewer Attribute it is Signal Attribute
         self.time_data = np.linspace(0, 10, 1000)
-        self.amplitude_data = np.sin(self.time_data)
+       # self.amplitude_data = np.sin(self.time_data) # NOT Viewer Attribute it is Signal Attribute
         self.current_index = 0
         self.is_playing = True
         self.is_rewinding = False
@@ -48,90 +51,81 @@ class Viewer(QWidget):
 
     def createUIElements(self):
         print("Elements created")
-        self.setStyleSheet("background-color: #2D2D2D;")
-        self.setObjectName("Viewer 1")
-        self.resize(792, 434)
+
 
         self.signalViewer = QFrame(self)
-        self.signalViewer.setStyleSheet(background)
-        self.signalViewer.setFrameShape(QFrame.StyledPanel)
-        self.signalPlotLayout = QVBoxLayout(self.signalViewer)
-        self.signalPlotLayout.setContentsMargins(5, 5, 5, 5)
-
-        self.titleToolbarLayout = QHBoxLayout()
-        self.signalTitle = QLabel(self.viewer_name, self.signalViewer)  
-        self.titleToolbarLayout.addWidget(self.signalTitle)
-
+        self.signalTitle = QLabel(self.viewer_name, self.signalViewer)
         self.signalTitleEditButton = QPushButton(self.signalViewer)
-        self.signalTitleEditButton.setIcon(QtGui.QIcon("Assets/Graph controls/edit.png"))
-        self.signalTitleEditButton.setFixedSize(20, 20)
-        self.titleToolbarLayout.addWidget(self.signalTitleEditButton)
-
-        self.titleToolbarLayout.addSpacerItem(QSpacerItem(40, 0, QSizePolicy.Expanding, QSizePolicy.Minimum))
-
-        self.SignalbuttonsLayout = QHBoxLayout()
-
-        # Time label
         self.timeLabel = QLabel("00:00", self.signalViewer)
-        self.SignalbuttonsLayout.addWidget(self.timeLabel)
-        self.SignalbuttonsLayout.addSpacing(10)
-
-        # Control buttons 
         self.pauseButton = QPushButton(self.signalViewer)
-        self.pauseButton.setIcon(QtGui.QIcon("Assets/ControlsButtons/pause.png"))
-        self.SignalbuttonsLayout.addWidget(self.pauseButton)
-
         self.playButton = QPushButton(self.signalViewer)
-        self.playButton.setIcon(QtGui.QIcon("Assets/ControlsButtons/play.png"))
-        self.SignalbuttonsLayout.addWidget(self.playButton)
-
         self.backwardButton = QPushButton(self.signalViewer)
-        self.backwardButton.setIcon(QtGui.QIcon("Assets/ControlsButtons/backward.png"))
-        self.SignalbuttonsLayout.addWidget(self.backwardButton)
-
         self.forwardButton = QPushButton(self.signalViewer)
-        self.forwardButton.setIcon(QtGui.QIcon("Assets/ControlsButtons/forward.png"))
-        self.SignalbuttonsLayout.addWidget(self.forwardButton)
-
         self.rewindButton = QPushButton(self.signalViewer)
-        self.rewindButton.setIcon(QtGui.QIcon("Assets/ControlsButtons/rewindOn.png"))
-        self.rewindButton.setStyleSheet(rewindOffButtonStyle)
-        self.SignalbuttonsLayout.addWidget(self.rewindButton)
-
-        self.SignalbuttonsLayout.addStretch(1)
-
-        # Slider
         self.slider = QSlider(Qt.Horizontal, self.signalViewer)
         self.slider.setRange(0, 100)
         self.slider.setValue(0)
-        self.slider.setMinimumWidth(100)  
-        self.slider.setMaximumWidth(400)
-
-        self.SignalbuttonsLayout.addWidget(self.slider)
-        self.SignalbuttonsLayout.addStretch(1)
-
-        # Plot widget
         self.plot_widget = pg.PlotWidget()
-        self.plot_widget.setBackground('#242424')
-        self.plot_curve = self.plot_widget.plot(pen=pg.mkPen(color=self.plot_color, width=self.plot_thickness))
 
-        # Adding all layouts to the main layout
-        self.signalPlotLayout.addLayout(self.titleToolbarLayout)
-        self.signalPlotLayout.addWidget(self.plot_widget)
-        self.signalPlotLayout.addLayout(self.SignalbuttonsLayout)
+
+
+
+
+
+
+
 
     def stylingUI(self):
+        self.setStyleSheet("background-color: #2D2D2D;")
+        self.signalViewer.setStyleSheet(background)
+        self.signalTitleEditButton.setIcon(QtGui.QIcon("Assets/Graph controls/edit.png"))
+        self.signalTitleEditButton.setFixedSize(20, 20)
+        self.pauseButton.setIcon(QtGui.QIcon("Assets/ControlsButtons/pause.png"))
+        self.playButton.setIcon(QtGui.QIcon("Assets/ControlsButtons/play.png"))
+        self.backwardButton.setIcon(QtGui.QIcon("Assets/ControlsButtons/backward.png"))
+        self.forwardButton.setIcon(QtGui.QIcon("Assets/ControlsButtons/forward.png"))
+        self.rewindButton.setIcon(QtGui.QIcon("Assets/ControlsButtons/rewindOn.png"))
+        self.rewindButton.setStyleSheet(rewindOffButtonStyle)
+        self.slider.setMinimumWidth(100)
+        self.slider.setMaximumWidth(400)
+        self.plot_widget.setBackground('#242424')
+        self.signalViewer.setFrameShape(QFrame.StyledPanel)
+        self.signalPlotLayout.setContentsMargins(5, 5, 5, 5)
         self.signalTitle.setStyleSheet(labelStyle)
         self.timeLabel.setStyleSheet(labelStyle)
         self.pauseButton.setStyleSheet(signalControlButtonStyle)
         self.playButton.setStyleSheet(signalControlButtonStyle)
         self.forwardButton.setStyleSheet(signalControlButtonStyle)
         self.backwardButton.setStyleSheet(signalControlButtonStyle)
-        self.rewindButton.setStyleSheet(rewindOffButtonStyle) 
+        self.rewindButton.setStyleSheet(rewindOffButtonStyle)
         self.slider.setStyleSheet(panSlider)
         print("Elements are styled")
-         
+
     def layoutSet(self):
+        self.signalPlotLayout = QVBoxLayout(self.signalViewer)
+        self.titleToolbarLayout = QHBoxLayout()
+        self.titleToolbarLayout.addWidget(self.signalTitle)
+        self.titleToolbarLayout.addWidget(self.signalTitleEditButton)
+        self.titleToolbarLayout.addSpacerItem(QSpacerItem(40, 0, QSizePolicy.Expanding, QSizePolicy.Minimum))
+
+        self.SignalbuttonsLayout = QHBoxLayout()
+        self.SignalbuttonsLayout.addWidget(self.timeLabel)
+        self.SignalbuttonsLayout.addSpacing(10)
+        self.SignalbuttonsLayout.addWidget(self.pauseButton)
+        self.SignalbuttonsLayout.addWidget(self.playButton)
+        self.SignalbuttonsLayout.addWidget(self.backwardButton)
+        self.SignalbuttonsLayout.addWidget(self.forwardButton)
+        self.SignalbuttonsLayout.addWidget(self.rewindButton)
+        self.SignalbuttonsLayout.addStretch(1)
+        self.SignalbuttonsLayout.addWidget(self.slider)
+        self.SignalbuttonsLayout.addStretch(1)
+        self.signalPlotLayout.addLayout(self.titleToolbarLayout)
+        self.signalPlotLayout.addWidget(self.plot_widget)
+        self.signalPlotLayout.addLayout(self.SignalbuttonsLayout)
+
+
+
+
         mainLayout = QVBoxLayout(self)
         mainLayout.addWidget(self.signalViewer)
         self.setLayout(mainLayout)
@@ -147,7 +141,7 @@ class Viewer(QWidget):
         self.plot_widget.sigXRangeChanged.connect(self.adjustPlotLimits)
         print("UI panels are connected to each other")
 
-    def updatePlot(self):
+    def updatePlot(self): # IT Should TAKE SIGNAL AS ARGUMENT TO TAKE DATA AND COLOR AND ALL ATTRIBUTES
         if self.is_playing:  
             self.plot_curve.setData(self.time_data[:self.current_index], self.amplitude_data[:self.current_index])
             self.current_index += 1
@@ -163,7 +157,7 @@ class Viewer(QWidget):
             milliseconds = int((elapsed_time % 1) * 1000) 
             self.timeLabel.setText(f"{int(minutes):02}:{int(seconds):02}.{milliseconds:03}")
 
-    def loadData(self, time_data, amplitude_data):
+    def loadData(self, time_data, amplitude_data):  # ALL DATA IS INSIDE SIGNAL CLASS signal_name.data| signal.color[0] | I discarded the thicknes for Now Review All structrue First
         self.time_data = time_data
         self.amplitude_data = amplitude_data
         self.current_index = 0
@@ -231,6 +225,22 @@ class Viewer(QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    viewer = Viewer()
-    viewer.show()
+    main = QMainWindow()
+    signal = Signal()
+    signal.name = "Heart Rate Monitor"
+    signal.location = "E/newFolder"
+    time = np.arange(0, 10, 0.1)  # Time from 0 to 10 seconds, sampled every 0.1 second
+    value = 75 + 5 * np.sin(0.5 * time)  # Simulated heart rate fluctuating around 75 bpm
+    signal.data = np.column_stack((time, value))
+    signal.channels = [1, 2]
+    signal.colors = ["red", "#242424"]  # color in channel 1, color in channel 2
+    signal.isLive = True
+    signal.isShown = True
+
+viewer = Viewer()
+    main.setCentralWidget(viewer)
+
+    main.resize(750, 400)
+    main.show()
     sys.exit(app.exec_())
+
