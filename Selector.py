@@ -52,16 +52,20 @@ class Selector(QWidget):
                                                         font-size:12px; 
                                                         color:#7c7c7c;
                                                         border:none;
-                                                        border-bottom:1px solid #76D4D4;}""")
+                                                        border-bottom:1px solid #76D4D4;
+                                                        text-align: left;}""")
 
         self.table.setShowGrid(False)
-        self.table.setColumnWidth(0 , int(480*.05))
-        self.table.setStyleSheet("""border:none;""")
-        # self.table.setColumnWidth(1 , 480*.3)
+        # self.table.setColumnWidth(0 , 3)
+        self.table.setStyleSheet("""color:#EFEFEF; border:none;""")
+        self.table.setColumnWidth(0, 1)
         self.table.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
-        self.table.setColumnWidth(2 , int(480*.4))
+        self.table.horizontalHeader().setSectionResizeMode(2, QHeaderView.Stretch)
         self.table.setColumnWidth(3 , int(480*.1))
         self.table.setColumnWidth(4 , int(480*.1))
+
+        for i in range(self.table.horizontalHeader().count()):
+            self.table.horizontalHeaderItem(i).setTextAlignment(Qt.AlignLeft)
         print("Elements is styled")
 
     def layoutSet(self):
@@ -88,14 +92,41 @@ class Selector(QWidget):
     def  placeSignalElements(self):
         self.table.setRowCount(len(self.signals))
         for row ,signal in enumerate(self.signals):
-            self.table.setItem(row, 0, QTableWidgetItem(signal.colors[0]))
+            colorPreview = QPushButton()
+            colorPreview.setStyleSheet(f"background-color:{signal.colors[0]};")
+            colorPreview.setFixedWidth(5)
+            colorPreview.setEnabled(False)
+
+            colorHolder =QHBoxLayout()
+            colorHolder.addWidget(colorPreview)
+            colorHolder.setContentsMargins(0, 0, 0, 0)
+
+            colorWidget =QWidget()
+            colorWidget.setLayout(colorHolder)
+
+            self.table.setCellWidget(row, 0,colorWidget)
             self.table.setItem(row, 1, QTableWidgetItem(signal.name))
             self.table.setItem(row, 2, QTableWidgetItem(signal.location))
-            self.table.setCellWidget(row, 3, QPushButton("h"))
-            self.table.setCellWidget(row, 4, QPushButton("S"))
+
+            hideButton = QPushButton("H")
+            hideButton.clicked.connect(lambda checked, button=hideButton, signal = self.signals[row]: self.toggleHide(button,signal))
+            switchButton = QPushButton("S")
+
+            self.table.setCellWidget(row, 3, hideButton)
+            self.table.setCellWidget(row, 4, switchButton)
 
         print("signals is placed")
 
+    def toggleHide(self, button, signal):
+        if button.text() =="H":
+            button.setText("h")
+            signal.isShown = False
+        else:
+            button.setText("H")
+            signal.isShown = True
+
+        print(signal.name)
+        print(signal.isShown)
     def connectProperties(self):
         print("selected signal is now on properties panel")
 
