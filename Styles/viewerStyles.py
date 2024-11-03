@@ -37,7 +37,7 @@ QLabel {
     font-size: 20px;
 }
 """
-panSlider="""
+panSliderStyle="""
 QSlider::handle {
                 background-color: #76D4D4;
                 width: 5px;
