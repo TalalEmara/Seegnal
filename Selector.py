@@ -190,9 +190,9 @@ class Selector(QWidget):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     main = QMainWindow()
-    heartSignal = Signal()
-    heartSignal.name = "Heart Rate Monitor"
-    heartSignal.location = "E/newFolder"
+    heartSignal = Signal("Heart", "E/Heart", "")
+    heartSignal.name = heartSignal.name
+    heartSignal.location = heartSignal.location
     time = np.arange(0, 10, 0.1)  # Time from 0 to 10 seconds, sampled every 0.1 second
     value = 75 + 5 * np.sin(0.5 * time)  # Simulated heart rate fluctuating around 75 bpm
     heartSignal.data = np.column_stack((time, value))
@@ -201,9 +201,9 @@ if __name__ == "__main__":
     heartSignal.isLive = True
     heartSignal.isShown = True
 
-    tempSignal = Signal()
-    tempSignal.name = "Temperature Sensor"
-    tempSignal.location = "D/dataFolder"
+    tempSignal = Signal("Temprature", "E/Temp", "")
+    tempSignal.name = tempSignal.name
+    tempSignal.location = tempSignal.location
     time = np.arange(0, 24, 1)  # Time from 0 to 24 hours, sampled every hour
     value = 20 + 3 * np.sin(0.3 * time) + np.random.normal(0, 0.5,
                                                            len(time))  # Temperature fluctuating around 20°C with slight noise
