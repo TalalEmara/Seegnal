@@ -1,7 +1,8 @@
 import sys
 
-from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QHBoxLayout, QApplication, QMainWindow, QVBoxLayout
-from Styles.toolBarStyle import labelStyle, signalControlButtonStyle
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QHBoxLayout, QApplication, QMainWindow, QVBoxLayout, QGroupBox
+from Styles.toolBarStyle import labelStyle, signalControlButtonStyle, groupBoxStyle
 
 
 class ToolBar(QWidget):
@@ -26,7 +27,7 @@ class ToolBar(QWidget):
 
 
     def createUIElements(self):
-        self.logoLabel = QLabel("Seegnal |")
+        self.logoLabel = QLabel("Seegnal|")
         self.importButton = QPushButton("import")
         #Control Buttons
         self.pauseButton = QPushButton()
@@ -45,37 +46,49 @@ class ToolBar(QWidget):
 
     def stylingUI(self):
         self.logoLabel.setStyleSheet(labelStyle)
+        self.logoLabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
 
-        self.importButton.setStyleSheet(signalControlButtonStyle)
+        self.importButton.setStyleSheet(signalControlButtonStyle + "QPushButton{ background-color: #76D4D4; color: #2d2d2d;}")
+
+        self.controlsGroupBox.setStyleSheet(groupBoxStyle)
         self.pauseButton.setStyleSheet(signalControlButtonStyle)
         self.playButton.setStyleSheet(signalControlButtonStyle)
         self.backwardButton.setStyleSheet(signalControlButtonStyle)
         self.forwardButton.setStyleSheet(signalControlButtonStyle)
         self.rewindButton.setStyleSheet(signalControlButtonStyle)
-        self.linkedButton.setStyleSheet(signalControlButtonStyle)
         self.glueButton.setStyleSheet(signalControlButtonStyle)
         self.polarButton.setStyleSheet(signalControlButtonStyle)
+        self.linkedButton.setStyleSheet(signalControlButtonStyle)
+
+        self.pauseButton.setMaximumWidth(50)
+        self.playButton.setMaximumWidth(50)
+        self.backwardButton.setMaximumWidth(50)
+        self.forwardButton.setMaximumWidth(50)
+        self.rewindButton.setMaximumWidth(50)
+        self.linkedButton.setMaximumWidth(150)
+
         print("Elements is styled")
 
 
     def layoutSet(self):
         self.mainLayout = QHBoxLayout()
 
+        self.controlsGroupBox = QGroupBox("Controls")
         self.controlsLayout = QHBoxLayout()
         self.controlsLayout.addWidget(self.pauseButton)
         self.controlsLayout.addWidget(self.playButton)
         self.controlsLayout.addWidget(self.backwardButton)
         self.controlsLayout.addWidget(self.forwardButton)
         self.controlsLayout.addWidget(self.rewindButton)
+        self.controlsLayout.addWidget(self.linkedButton)
+        self.controlsGroupBox.setLayout(self.controlsLayout)
 
-        self.mainLayout.addWidget(self.logoLabel)
-        self.mainLayout.addWidget(self.importButton)
-        self.mainLayout.addLayout(self.controlsLayout)
-        self.mainLayout.addWidget(self.linkedButton)
-        self.mainLayout.addWidget(self.glueButton)
-        self.mainLayout.addWidget(self.polarButton)
-
-
+        self.mainLayout.addWidget(self.logoLabel, 1)
+        self.mainLayout.addWidget(self.importButton, 1)
+        self.mainLayout.addWidget(self.controlsGroupBox, 3)
+        self.mainLayout.addWidget(self.glueButton, 1)
+        self.mainLayout.addWidget(self.polarButton, 1)
+        self.mainLayout.addStretch(1)
 
         self.setLayout(self.mainLayout)
 
@@ -103,10 +116,10 @@ if __name__ == "__main__":
         # Set up the main window
         main_window = QMainWindow()
         main_window.setWindowTitle("Toolbar Test")
-        main_window.resize(800, 50)
+        main_window.resize(1600, 50)
 
         # Apply the background color to the main window
-        main_window.setStyleSheet("background-color: #2d2d2d;")
+        main_window.setStyleSheet("background-color: #242424;")
 
         # Create a central widget and layout
         central_widget = QWidget()
