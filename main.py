@@ -4,6 +4,7 @@ from Properties import Properties
 from Selector import Selector
 from  Signal import Signal
 from Viewer import Viewer
+from Toolbar import ToolBar
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QApplication, QVBoxLayout, QHBoxLayout, QPushButton, QWidget
 
@@ -25,7 +26,9 @@ class main(QMainWindow):
 
     def createUIElements(self):
 
-        self.importButton = QPushButton("Import test") #For testing only
+        self.toolbar = ToolBar()
+
+        # self.importButton = QPushButton("Import test") #For testing only
 
         self.selectorChannel1 = Selector()
         self.selectorChannel1.selectorId = 0
@@ -44,6 +47,8 @@ class main(QMainWindow):
         self.mainLayout = QVBoxLayout()
 
         self.toolbarLayout = QHBoxLayout()
+        self.toolbarLayout.addWidget(self.toolbar)
+
         self.workspaceLayout =QHBoxLayout()
 
         self.channelsLayout =QVBoxLayout()
@@ -61,7 +66,7 @@ class main(QMainWindow):
         self.channel2Layout.addWidget(self.selectorChannel2)
         self.channel2Layout.addWidget(self.viewerChannel2)
 
-        self.toolbarLayout.addWidget(self.importButton)
+        # self.toolbarLayout.addWidget(self.importButton)
 
 
         self.channelsLayout.addLayout(self.channel1Layout)
@@ -86,7 +91,7 @@ class main(QMainWindow):
         self.connectPolar()
         self.connectGlue()
     def connectImport(self):
-        self.importButton.clicked.connect(self.openImportWindow)
+        self.toolbar.importButton.clicked.connect(self.openImportWindow)
 
         print("Toolbar import button is connecting to its method")
     def openImportWindow(self):
