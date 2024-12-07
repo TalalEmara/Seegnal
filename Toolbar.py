@@ -1,8 +1,9 @@
 import sys
 
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QHBoxLayout, QApplication, QMainWindow, QVBoxLayout, QGroupBox
-from Styles.toolBarStyle import labelStyle, signalControlButtonStyle, groupBoxStyle
+from Styles.toolBarStyle import labelStyle, signalControlButtonStyle, groupBoxStyle,rewindOnButtonStyle,rewindOffButtonStyle,linkedButtonOffStyle,linkedButtonOnStyle
 
 
 class ToolBar(QWidget):
@@ -15,6 +16,8 @@ class ToolBar(QWidget):
 
 
     def initializeAttributes(self):
+        self.isRewind = False
+        self.isLinked = False
         #should have viewers
         print("Attributes")
 
@@ -36,7 +39,7 @@ class ToolBar(QWidget):
         self.forwardButton = QPushButton()
         self.rewindButton = QPushButton()
         #Linked
-        self.linkedButton = QPushButton("Linked")
+        self.linkedButton = QPushButton("Link")
         #Glue
         self.glueButton = QPushButton("Glue")
         #Polar
@@ -48,17 +51,35 @@ class ToolBar(QWidget):
         self.logoLabel.setStyleSheet(labelStyle)
         self.logoLabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
 
-        self.importButton.setStyleSheet(signalControlButtonStyle + "QPushButton{ background-color: #76D4D4; color: #2d2d2d;}")
+        self.importButton.setStyleSheet(
+            signalControlButtonStyle + """
+            QPushButton {
+                background-color: #76D4D4;
+                color: #2d2d2d;
+            }
+            QPushButton:hover {
+                background-color: #a6f1f1;
+                color: #1c1c1c;        
+                border-color: #4ca6a6; 
+            }
+            """
+        )
+
+        self.pauseButton.setIcon(QIcon("Assets/ControlsButtons/pause.png"))
+        self.playButton.setIcon(QIcon("Assets/ControlsButtons/play.png"))
+        self.backwardButton.setIcon(QIcon("Assets/ControlsButtons/backward.png"))
+        self.forwardButton.setIcon(QIcon("Assets/ControlsButtons/forward.png"))
+        self.rewindButton.setIcon(QIcon("Assets/ControlsButtons/rewindOff.png"))
 
         self.controlsGroupBox.setStyleSheet(groupBoxStyle)
         self.pauseButton.setStyleSheet(signalControlButtonStyle)
         self.playButton.setStyleSheet(signalControlButtonStyle)
         self.backwardButton.setStyleSheet(signalControlButtonStyle)
         self.forwardButton.setStyleSheet(signalControlButtonStyle)
-        self.rewindButton.setStyleSheet(signalControlButtonStyle)
+        self.rewindButton.setStyleSheet(rewindOffButtonStyle)
         self.glueButton.setStyleSheet(signalControlButtonStyle)
         self.polarButton.setStyleSheet(signalControlButtonStyle)
-        self.linkedButton.setStyleSheet(signalControlButtonStyle)
+        self.linkedButton.setStyleSheet(linkedButtonOffStyle)
 
         self.pauseButton.setMaximumWidth(50)
         self.playButton.setMaximumWidth(50)
@@ -97,8 +118,28 @@ class ToolBar(QWidget):
 
         print("layout set")
 
+    def toggleRewindButton(self):
+            self.isRewind = not self.isRewind
+            if self.isRewind:
+                self.rewindButton.setStyleSheet(rewindOnButtonStyle)
+                self.rewindButton.setIcon(QIcon("Assets/ControlsButtons/rewindOn.png"))
+            else:
+                self.rewindButton.setStyleSheet(rewindOffButtonStyle)
+                self.rewindButton.setIcon(QIcon("Assets/ControlsButtons/rewindOff.png"))
+
+    def toggleLinkedButton(self):
+            self.isLinked = not self.isLinked
+            if self.isLinked:
+                self.linkedButton.setStyleSheet(linkedButtonOnStyle)
+                self.linkedButton.setText("Linked")
+            else:
+                self.linkedButton.setStyleSheet(linkedButtonOffStyle)
+                self.linkedButton.setText("Link")
+
 
     def connectingUI(self):
+        self.rewindButton.clicked.connect(self.toggleRewindButton)
+        self.linkedButton.clicked.connect(self.toggleLinkedButton)
         print("UI panels is connected to each other")
 
     def importSignal(self):
