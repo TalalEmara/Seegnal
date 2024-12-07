@@ -11,16 +11,15 @@ from Signal import Signal
 
 class Properties(QWidget):
 
-    def __init__(self, signal):
+    def __init__(self):
         super().__init__()
-        print(f"{self}initialized")
-        self.initializeAttributes(signal)
+        self.initializeAttributes()
         self.initializeUI()
         self.connectingUI()
+        print(f"{self}initialized")
 
 
-    def initializeAttributes(self, signal):
-        self.signal = signal
+    def initializeAttributes(self):
         print("Initialize Attributes")
     def initializeUI(self):
         print("UI initialized")
@@ -131,6 +130,8 @@ class Properties(QWidget):
         self.colorChannel2Input.clicked.connect(self.open_color_dialog)
         print("UI panels is connected to each other")
 
+    def setSignal(self, signal):
+        self.signal = signal
     def open_color_dialog(self):
 
         color = QColorDialog.getColor()
@@ -161,7 +162,9 @@ if __name__ == "__main__":
     heartSignal.isLive = True
     heartSignal.isShown = True
 
-    props = Properties(heartSignal)
+    props = Properties()
+    props.setSignal(heartSignal)
+
 
     main.setCentralWidget(props)
 

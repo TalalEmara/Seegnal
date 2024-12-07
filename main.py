@@ -1,5 +1,6 @@
 import sys
 from ImportWindow import ImportWindow
+from Properties import Properties
 from Selector import Selector
 from  Signal import Signal
 from Viewer import Viewer
@@ -34,6 +35,7 @@ class main(QMainWindow):
         self.viewerChannel1 = Viewer()
         self.viewerChannel2 = Viewer()
 
+        self.propertiesPanel = Properties()
 
 
         print("Elements created")
@@ -46,6 +48,8 @@ class main(QMainWindow):
 
         self.channelsLayout =QVBoxLayout()
         self.propertiesLayout =QVBoxLayout()
+
+        self.propertiesLayout.addWidget(self.propertiesPanel)
 
         self.channel1Layout = QHBoxLayout()
         self.channel2Layout = QHBoxLayout()
@@ -63,8 +67,8 @@ class main(QMainWindow):
         self.channelsLayout.addLayout(self.channel1Layout)
         self.channelsLayout.addLayout(self.channel2Layout)
 
-        self.workspaceLayout.addLayout(self.channelsLayout)
-        self.workspaceLayout.addLayout(self.propertiesLayout)
+        self.workspaceLayout.addLayout(self.channelsLayout,80)
+        self.workspaceLayout.addLayout(self.propertiesLayout,20)
 
         self.mainLayout.addLayout(self.toolbarLayout)
         self.mainLayout.addLayout(self.workspaceLayout)
