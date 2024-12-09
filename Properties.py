@@ -144,8 +144,10 @@ class Properties(QWidget):
         sender = self.sender()
         if color.isValid():
             if sender == self.colorChannel1Input:
+                self.signal.changeChannel1Color(color.name())
                 print("1" + color.name())
             else:
+                self.signal.changeChannel2Color(color.name())
                 print("2" + color.name())
 
             sender.setStyleSheet(f"background: {color.name()};")

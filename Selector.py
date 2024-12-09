@@ -125,7 +125,7 @@ class Selector(QWidget):
         self.table.setRowCount(len(self.signals))
         for row, signal in enumerate(self.signals):
             colorPreview = QPushButton()
-            colorPreview.setStyleSheet(f"background-color:{signal.colors[0]};")
+            colorPreview.setStyleSheet(f"background-color:{signal.colors[self.selectorId]};")
             colorPreview.setFixedWidth(5)
             colorPreview.setEnabled(False)
 

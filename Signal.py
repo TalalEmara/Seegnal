@@ -8,6 +8,12 @@ class Signal:
         self.isLive = False
         self.isShown = True
 
+    def changeChannel1Color(self,color):
+        self.colors[0] = color
+    def changeChannel2Color(self,color):
+        self.colors[1] = color
+
+
 
 
         
