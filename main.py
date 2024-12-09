@@ -91,6 +91,8 @@ class main(QMainWindow):
 
     def connectingUI(self):
         self.connectImport()
+        self.selectorChannel1.properties = self.propertiesPanel
+        self.selectorChannel2.properties = self.propertiesPanel
         self.selectorChannel1.channelChanged.connect(self.updateSelectors)
         self.selectorChannel2.channelChanged.connect(self.updateSelectors)
         self.connectLinkControls()

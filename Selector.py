@@ -6,6 +6,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QLabel, QTableWidget, QVBoxLayout, QHBoxLayout, \
     QTableWidgetItem, QPushButton, QHeaderView
 
+from Properties import Properties
 from Signal import Signal
 
 
@@ -23,6 +24,7 @@ class Selector(QWidget):
     def initializeAttributes(self, id):
         self.signals = []
         self.selectorId = id
+        self.properties = Properties()
     def initializeUI(self):
         print("UI initialized")
         self.createUIElements()
@@ -156,6 +158,8 @@ class Selector(QWidget):
     def on_item_clicked(self, item):
         row = item.row()
         self.table.selectRow(row)
+        selected_signal = self.signals[row]
+        self.properties.setSignal(selected_signal)
         print(f"Selected row: {row}")
 
     def toggleSwitch(self, button, signal):
@@ -180,8 +184,7 @@ class Selector(QWidget):
 
         print(signal.name)
         print(signal.isShown)
-    def connectProperties(self):
-        print("selected signal is now on properties panel")
+
 
     def connectViewer(self):
         print("selected signal is now on viewer")

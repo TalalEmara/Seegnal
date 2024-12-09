@@ -11,13 +11,15 @@ from Signal import Signal
 
 class Properties(QWidget):
 
+
     def __init__(self):
         super().__init__()
+        self.signal = Signal("heart","d/dd/d",[1,0,1,1,0])
+        self.signal.colors[0] = "white"
         self.initializeAttributes()
         self.initializeUI()
         self.connectingUI()
         print(f"{self}initialized")
-
 
     def initializeAttributes(self):
         print("Initialize Attributes")
@@ -29,7 +31,7 @@ class Properties(QWidget):
 
     def createUIElements(self):
         self.propertiesLabel = QLabel("Properties")
-        self.signalNameLabel = QLabel("signal Name")#should be signal name
+        self.signalNameLabel = QLabel(self.signal.name) #should be signal name
         self.colorChannel1Label = QLabel("ch1 color")
         # self.colorChannel1combo = QComboBox()
         self.colorChannel1Input = QPushButton()
@@ -38,6 +40,7 @@ class Properties(QWidget):
         self.colorChannel2Input = QPushButton()
         self.lineThicknessLabel = QLabel("Line thickness")
         self.thicknessInput = QSpinBox()
+
 
 
         print("Elements created")
@@ -70,11 +73,11 @@ class Properties(QWidget):
                                                 padding-left: 15px;""")
 
         # should take color of the signal
-        self.colorChannel1Input.setStyleSheet("""
-                                                background-color:red; 
+        self.colorChannel1Input.setStyleSheet(f"""
+                                                background-color:{self.signal.colors[0]}; 
                                                 """)
-        self.colorChannel2Input.setStyleSheet("""
-                                                background-color:blue;
+        self.colorChannel2Input.setStyleSheet(f"""
+                                                background-color:{self.signal.colors[1]};
                                                 """)
 
         self.lineThicknessLabel.setStyleSheet("""color: #EFEFEF;
@@ -132,6 +135,9 @@ class Properties(QWidget):
 
     def setSignal(self, signal):
         self.signal = signal
+        self.signalNameLabel.setText(self.signal.name)
+        self.colorChannel1Input.setStyleSheet(f"background-color:{self.signal.colors[0]};")
+        self.colorChannel2Input.setStyleSheet(f"background-color:{self.signal.colors[1]};")
     def open_color_dialog(self):
 
         color = QColorDialog.getColor()
