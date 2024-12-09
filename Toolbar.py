@@ -122,10 +122,8 @@ class ToolBar(QWidget):
             self.isRewind = not self.isRewind
             if self.isRewind:
                 self.rewindButton.setStyleSheet(rewindOnButtonStyle)
-                self.rewindButton.setIcon(QIcon("Assets/ControlsButtons/rewindOn.png"))
             else:
                 self.rewindButton.setStyleSheet(rewindOffButtonStyle)
-                self.rewindButton.setIcon(QIcon("Assets/ControlsButtons/rewindOff.png"))
 
     def toggleLinkedButton(self):
             self.isLinked = not self.isLinked

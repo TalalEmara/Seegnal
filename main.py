@@ -1,4 +1,7 @@
 import sys
+
+from PyQt5.QtCore import Qt
+
 from ImportWindow import ImportWindow
 from Properties import Properties
 from Selector import Selector
@@ -23,6 +26,8 @@ class main(QMainWindow):
         print("UI initialized")
         self.createUIElements()
         self.layoutSet()
+        self.setAttribute(Qt.WA_StyledBackground, True)
+        self.setStyleSheet("background-color:#2D2D2D;")
 
     def createUIElements(self):
 
@@ -85,11 +90,13 @@ class main(QMainWindow):
         print("layout set")
 
     def connectingUI(self):
-        print("UI panels is connected to each other")
         self.connectImport()
+        self.selectorChannel1.channelChanged.connect(self.updateSelectors)
+        self.selectorChannel2.channelChanged.connect(self.updateSelectors)
         self.connectLinkControls()
         self.connectPolar()
         self.connectGlue()
+        print("UI panels is connected to each other")
     def connectImport(self):
         self.toolbar.importButton.clicked.connect(self.openImportWindow)
 
@@ -102,9 +109,13 @@ class main(QMainWindow):
 
     def addSignal(self, signal):
         self.signals.append(signal)
+        self.updateSelectors()
+        print(f"Signal added to main signals array: {signal} channels: {signal.channels}")
+
+    def updateSelectors(self):
         self.updateSelector(self.selectorChannel1)
         self.updateSelector(self.selectorChannel2)
-        print(f"Signal added to main signals array: {signal} channels: {signal.channels}")
+        print("Selectors updated")
 
     def updateSelector(self, selector):
         selector.signals.clear()

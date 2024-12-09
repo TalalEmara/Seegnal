@@ -1,7 +1,7 @@
 import sys
 
 import numpy as np
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QLabel, QTableWidget, QVBoxLayout, QHBoxLayout, \
     QTableWidgetItem, QPushButton, QHeaderView
@@ -11,6 +11,7 @@ from Signal import Signal
 
 class Selector(QWidget):
 
+    channelChanged = pyqtSignal()
     def __init__(self,id = 0):
         super().__init__()
         print(f"{self}initialized")
@@ -118,10 +119,6 @@ class Selector(QWidget):
         print("UI panels is connected to each other")
 
 
-
-    def createSignalElement(self, signal):
-        print("signal is created into ui")
-
     def placeSignalElements(self):
         self.table.setRowCount(len(self.signals))
         for row, signal in enumerate(self.signals):
@@ -169,6 +166,9 @@ class Selector(QWidget):
             signal.channels[self.selectorId] = 0
             self.signals.remove(signal)
             self.placeSignalElements()
+            self.channelChanged.emit()
+
+
         print(signal.channels)
     def toggleHide(self, button, signal):
         if signal.isShown:
