@@ -10,6 +10,7 @@ from Viewer import Viewer
 from Toolbar import ToolBar
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QApplication, QVBoxLayout, QHBoxLayout, QPushButton, QWidget
+from Polar import NonRectangularWindow
 
 
 class main(QMainWindow):
@@ -65,11 +66,11 @@ class main(QMainWindow):
         self.channel2Layout = QHBoxLayout()
 
 
-        self.channel1Layout.addWidget(self.selectorChannel1)
-        self.channel1Layout.addWidget(self.viewerChannel1)
+        self.channel1Layout.addWidget(self.selectorChannel1,30)
+        self.channel1Layout.addWidget(self.viewerChannel1,70)
 
-        self.channel2Layout.addWidget(self.selectorChannel2)
-        self.channel2Layout.addWidget(self.viewerChannel2)
+        self.channel2Layout.addWidget(self.selectorChannel2,30)
+        self.channel2Layout.addWidget(self.viewerChannel2,70)
 
         # self.toolbarLayout.addWidget(self.importButton)
 
@@ -134,6 +135,7 @@ class main(QMainWindow):
     def connectGlue(self):
         print("Glue window is connected")
     def connectPolar(self):
+        self.toolbar.polarButton.clicked.connect(lambda: NonRectangularWindow().show())
         print("Polar window is connected")
     def ConnectLive(self):
         print("show live Signal")
