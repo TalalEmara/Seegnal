@@ -112,7 +112,10 @@ class main(QMainWindow):
 
     def addSignal(self, signal):
         self.signals.append(signal)
-        self.viewerChannel1.addSignal(signal)
+        if signal.channels[0] == 1:
+            self.viewerChannel1.addSignal(signal)
+        if signal.channels[1] == 1:
+            self.viewerChannel2.addSignal(signal)
         self.updateSelectors()
         print(f"Signal added to main signals array: {signal} channels: {signal.channels}")
 
