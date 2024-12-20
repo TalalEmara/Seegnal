@@ -11,6 +11,7 @@ from Toolbar import ToolBar
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QApplication, QVBoxLayout, QHBoxLayout, QPushButton, QWidget
 from Polar import NonRectangularWindow
+from glue import GlueWindow
 
 
 class main(QMainWindow):
@@ -98,7 +99,8 @@ class main(QMainWindow):
         self.selectorChannel2.channelChanged.connect(self.updateSelectors)
         self.connectLinkControls()
         self.connectPolar()
-        self.connectGlue()
+        # self. connectGlue()
+        self.toolbar.glueButton.clicked.connect(self.connectGlue)
         print("UI panels is connected to each other")
     def connectImport(self):
         self.toolbar.importButton.clicked.connect(self.openImportWindow)
@@ -135,7 +137,18 @@ class main(QMainWindow):
 
     def connectLinkControls(self):
         print("Toolbar Controls is connecting to viewers")
+
     def connectGlue(self):
+        frame1_x, frame1_y =self.viewerChannel1.get_visible_frame()
+        frame2_x, frame2_y = self.viewerChannel2.get_visible_frame()
+
+        # Process the captured frames as needed
+        print("Frame from Viewer 1 - X:", frame1_x, "Y:", frame1_y)
+        print("Frame from Viewer 2 - X:", frame2_x, "Y:", frame2_y)
+        self.glueview = GlueWindow()
+        self.glueview.init_plot(frame1_x, frame1_y, frame2_x, frame2_y)  # Pass the frame data
+        self.glueview.show()
+
         print("Glue window is connected")
     def connectPolar(self):
         self.toolbar.polarButton.clicked.connect(lambda: NonRectangularWindow().show())

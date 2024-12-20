@@ -256,14 +256,15 @@ class Viewer(QWidget):
             time_min = 0
 
         current_times = []
+        current_amplitudes=[]
         for signal in self.signals:
             current_index = self.current_indices[signal.name]
             if current_index < len(signal.data):  
                 current_time = signal.data[current_index, 0]
                 current_times.append(current_time)
 
-                # amplitude_data = signal.data[:current_index, 1]
-                # current_amplitudes.extend(amplitude_data)
+                amplitude_data = signal.data[:current_index, 1]
+                current_amplitudes.extend(amplitude_data)
 
 
         # Update time_max based on current times from signals
@@ -271,11 +272,11 @@ class Viewer(QWidget):
             current_max_time = max(current_times)
             time_max = max(time_max, current_max_time)
 
-        # if current_amplitudes:
-        #     y_min = min(current_amplitudes)
-        #     y_max = max(current_amplitudes)
-        #     padding = 0.1 * (y_max - y_min)  
-        #     self.plot_widget.setYRange(y_min - padding, y_max + padding)
+        if current_amplitudes:
+            y_min = min(current_amplitudes)
+            y_max = max(current_amplitudes)
+            padding = 0.1 * (y_max - y_min)
+            self.plot_widget.setYRange(y_min - padding, y_max + padding)
 
 
         # Set the x-range of the plot widget
@@ -321,8 +322,32 @@ class Viewer(QWidget):
             self.panSlider.setValue(0)
         self.adjustPlotLimits()
 
+    def get_visible_frame(self):
+        """Get the currently visible frame (x and y data) based on the x-axis limits of the plot."""
+        if not self.signals or not self.plot_widget:
+            return None, None
 
-    #trial 
+        # Get current x-axis limits from the PlotWidget
+        x_min, x_max = self.plot_widget.viewRange()[0]  # viewRange()[0] gives the x-axis range
+
+        visible_x_data = []
+        visible_y_data = []
+
+        for signal, plot_curve in zip(self.signals, self.plot_curves):
+            time_data = signal.data[:, 0]  # Assuming first column is time (x-axis)
+            amplitude_data = signal.data[:, 1]  # Assuming second column is amplitude (y-axis)
+
+            # Get indices of x data within the visible range
+            indices = np.where((time_data >= x_min) & (time_data <= x_max))[0]
+
+            if indices.size > 0:  # Ensure there is data within the range
+                visible_x_data.append(time_data[indices])
+                visible_y_data.append(amplitude_data[indices])
+
+        # Combine visible data for all signals
+        return visible_x_data, visible_y_data
+
+    #trial
     # def addNewSignal(self): #Trial , to add multiple signals and test with it
     #     new_signal = Signal()
     #     new_signal.name = f"Signal {len(self.signals) + 1}" 

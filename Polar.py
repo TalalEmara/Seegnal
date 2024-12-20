@@ -41,7 +41,7 @@ class NonRectangularWindow(QMainWindow):
 
         self.rewind_active = False
 
-        self.csv_file_path = 'D:/Faculty/SBE 24-25/DSP/Seegnal/signals_data/ECG_Normal.csv'
+        self.csv_file_path = 'signals_data/ECG_Normal.csv'
         self.data = pd.read_csv(self.csv_file_path)
         self.data = self.data.apply(pd.to_numeric, errors='coerce').to_numpy()
 
