@@ -145,7 +145,7 @@ class Properties(QWidget):
         if color.isValid():
             if sender == self.colorChannel1Input:
                 self.signal.changeChannel1Color(color.name())
-                print("1" + color.name())
+                print( self.signal.colors)
             else:
                 self.signal.changeChannel2Color(color.name())
                 print("2" + color.name())

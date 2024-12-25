@@ -45,6 +45,8 @@ class main(QMainWindow):
 
         self.viewerChannel1 = Viewer()
         self.viewerChannel2 = Viewer()
+        self.viewerChannel1.id = 0
+        self.viewerChannel2.id = 1
 
         self.propertiesPanel = Properties()
 
@@ -96,8 +98,8 @@ class main(QMainWindow):
         self.connectImport()
         self.selectorChannel1.properties = self.propertiesPanel
         self.selectorChannel2.properties = self.propertiesPanel
-        self.selectorChannel1.channelChanged.connect(self.updateSelectors)
-        self.selectorChannel2.channelChanged.connect(self.updateSelectors)
+        self.selectorChannel1.channelChanged.connect(self.handleChannelChange)
+        self.selectorChannel2.channelChanged.connect(self.handleChannelChange)
         self.connectLinkControls()
         self.toolbar.pauseButton.clicked.connect(self.pauselink)
         self.toolbar.playButton.clicked.connect(self.playlink)
@@ -209,12 +211,27 @@ class main(QMainWindow):
 
     def addSignal(self, signal):
         self.signals.append(signal)
+        signal.colorChanged.connect(self.handleColorChanged)
         if signal.channels[0] == 1:
             self.viewerChannel1.addSignal(signal)
         if signal.channels[1] == 1:
             self.viewerChannel2.addSignal(signal)
         self.updateSelectors()
         print(f"Signal added to main signals array: {signal} channels: {signal.channels}")
+
+    def handleChannelChange(self, signal):
+        if signal.channels == [1,0]:
+            self.viewerChannel2.removeSignal(signal)
+            self.viewerChannel1.addSignal(signal)
+        elif signal.channels == [0,1]:
+            self.viewerChannel1.removeSignal(signal)
+            self.viewerChannel2.addSignal(signal)
+
+        self.updateSelectors()
+
+    def handleColorChanged(self,signal):
+        self.viewerChannel1.updateSignalColor(signal)
+        self.viewerChannel2.updateSignalColor(signal)
 
     def updateSelectors(self):
         self.updateSelector(self.selectorChannel1)

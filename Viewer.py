@@ -33,6 +33,7 @@ class Viewer(QWidget):
 
     def initializeAttributes(self):
         print("Attributes")
+        self.id = 0
         
         self.current_index = 0
         self.is_playing = True
@@ -148,37 +149,61 @@ class Viewer(QWidget):
 
         print("UI panels are connected to each other")
 
-   
-        
     def addSignal(self, signal: Signal):
-        if signal.isShown: 
+        if signal.isShown and signal not in self.signals:
             self.signals.append(signal)
-            
-            #choose color based on channel number 
-            
-            #color = signal.colors[0] if signal.channels[0] == 1 else signal.colors[1]
-            #plot_curve = self.plot_widget.plot(pen=pg.mkPen(color))
 
-            plot_curve = self.plot_widget.plot(pen=pg.mkPen(signal.colors[1])) 
+            # Store the current X-range (i.e., the current visible time range)
+            current_x_range = self.plot_widget.viewRange()[0]
+
+            # Adjust signal data based on the current X-range to make it start from current_x_range[0]
+            signal_start_time = signal.data[0, 0]
+            signal.shift_time = current_x_range[0] - signal_start_time  # Time shift to start at current_x_range[0]
+
+            # adjusted_time_data = signal.data[:, 0] + shift_time
+
+            # Create the plot curve for the signal
+            plot_curve = self.plot_widget.plot(pen=pg.mkPen(signal.colors[self.id]))
+
+            plot_curve.setData(signal.getShitedTime(), signal.data[:, 1])
+
+            # Assign the signal name to the plot curve for later identification
+            plot_curve.opts['name'] = signal.name
+
+            # Store the plot curve in the list
             self.plot_curves.append(plot_curve)
             self.current_indices[signal.name] = 0
             print(f"Signal '{signal.name}' added with color {signal.colors[1]}")
+
     def removeSignal(self, signal: Signal):
-        if signal.isShown:
+        if signal.isShown and signal in self.signals:
+            # Remove the signal from the list
             self.signals.remove(signal)
 
-            plot_curve = self.plot_widget.plot(pen=pg.mkPen(signal.colors[1]))
-            self.plot_curves.remove(plot_curve)
-            self.current_indices[signal.name] = 0
-            print(f"Signal '{signal.name}' added with color {signal.colors[1]}")
+            # Find the plot curve associated with the signal and remove it
+            for plot_curve in self.plot_curves:
+                # Check if the plot curve's name matches the signal's name
+                if plot_curve.opts.get('name') == signal.name:
+                    self.plot_widget.removeItem(plot_curve)  # Remove the curve from the plot
+                    self.plot_curves.remove(plot_curve)  # Remove the curve from the list
+                    break
 
+            # Reset the signal index
+            signal.shift_time = 0
+            self.current_indices[signal.name] = 0
+            print(f"Signal '{signal.name}' removed")
+
+    def updateSignalColor(self, signal: Signal):
+        for plot_curve in self.plot_curves:
+            if plot_curve.opts.get('name') == signal.name:
+                plot_curve.setPen(pg.mkPen(signal.colors[self.id]))
     def updatePlot(self):
         if self.is_playing and self.signals:
             max_time = 0
 
             for signal, plot_curve in zip(self.signals, self.plot_curves):
                 current_index = self.current_indices[signal.name]
-                time_data = signal.data[:, 0]
+                time_data = signal.getShitedTime()
                 amplitude_data = signal.data[:, 1]
 
                 if current_index < len(time_data):
