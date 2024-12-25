@@ -161,7 +161,15 @@ class Viewer(QWidget):
 
             plot_curve = self.plot_widget.plot(pen=pg.mkPen(signal.colors[1])) 
             self.plot_curves.append(plot_curve)
-            self.current_indices[signal.name] = 0 
+            self.current_indices[signal.name] = 0
+            print(f"Signal '{signal.name}' added with color {signal.colors[1]}")
+    def removeSignal(self, signal: Signal):
+        if signal.isShown:
+            self.signals.remove(signal)
+
+            plot_curve = self.plot_widget.plot(pen=pg.mkPen(signal.colors[1]))
+            self.plot_curves.remove(plot_curve)
+            self.current_indices[signal.name] = 0
             print(f"Signal '{signal.name}' added with color {signal.colors[1]}")
 
     def updatePlot(self):
@@ -173,31 +181,27 @@ class Viewer(QWidget):
                 time_data = signal.data[:, 0]
                 amplitude_data = signal.data[:, 1]
 
-                if self.is_rewinding:
-                    if current_index < len(time_data):  
-                        plot_curve.setData(time_data[:current_index + 1], amplitude_data[:current_index + 1])  
-                        max_time = max(max_time, time_data[current_index])
-                        current_index += 1  
-                    else:
-                        current_index = 0 
+                if current_index < len(time_data):
+                    plot_curve.setData(time_data[:current_index + 1], amplitude_data[:current_index + 1])
+                    max_time = max(max_time, time_data[current_index])
+                    current_index += 1
                 else:
-                
-                    if current_index < len(time_data):  
-                        plot_curve.setData(time_data[:current_index], amplitude_data[:current_index]) 
-                        max_time = max(max_time, time_data[current_index])
-                        current_index += 1  
-                    else:
-                        self.current_indices[signal.name] = len(time_data)
+                    current_index = len(time_data) - 1
 
                 self.current_indices[signal.name] = current_index
-                
-        
+
             # Update time label with the maximum time
             self.timeLabel.setText(f"{int(max_time // 60):02}:{int(max_time % 60):02}.{int((max_time % 1) * 1000):03}")
+
+            # Adjust the visible range to simulate sliding
+            visible_duration = .2  # Duration of the visible window in seconds
+            time_min = max(0, max_time - visible_duration)
+            time_max = max_time
+            self.plot_widget.setXRange(time_min, time_max, padding=0)
+
             self.adjustPlotLimits()
 
-
-    #button functions 
+    #button functions
     def play(self):
         if not self.is_playing:  
             self.is_playing = True

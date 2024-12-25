@@ -12,7 +12,7 @@ from Signal import Signal
 
 class Selector(QWidget):
 
-    channelChanged = pyqtSignal()
+    channelChanged = pyqtSignal(Signal)
     def __init__(self,id = 0):
         super().__init__()
         print(f"{self}initialized")
@@ -170,7 +170,7 @@ class Selector(QWidget):
             signal.channels[self.selectorId] = 0
             self.signals.remove(signal)
             self.placeSignalElements()
-            self.channelChanged.emit()
+            self.channelChanged.emit(signal)
 
 
         print(signal.channels)
