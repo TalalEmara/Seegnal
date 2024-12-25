@@ -10,7 +10,8 @@ from Styles.toolBarStyle import linkedButtonOffStyle, linkedButtonOnStyle, rewin
 from Viewer import Viewer
 from Toolbar import ToolBar
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QMainWindow, QApplication, QVBoxLayout, QHBoxLayout, QPushButton, QWidget
+from PyQt5.QtWidgets import QMainWindow, QApplication, QVBoxLayout, QHBoxLayout, QPushButton, QWidget, QTabWidget, \
+    QLabel
 from Polar import NonRectangularWindow
 from glue import GlueWindow
 
@@ -50,6 +51,8 @@ class main(QMainWindow):
 
         self.propertiesPanel = Properties()
 
+        self.liveViewer = Viewer()
+        self.liveViewer.viewerTitle.setText("Live")
 
         print("Elements created")
 
@@ -61,7 +64,13 @@ class main(QMainWindow):
 
         self.workspaceLayout =QHBoxLayout()
 
-        self.channelsLayout =QVBoxLayout()
+        self.channelsSpace = QTabWidget()
+        self.localTab = QWidget()
+        self.liveTab = QWidget()
+
+        self.localLayout =QVBoxLayout()
+        self.liveLayout =QVBoxLayout()
+
         self.propertiesLayout =QVBoxLayout()
 
         self.propertiesLayout.addWidget(self.propertiesPanel)
@@ -79,10 +88,18 @@ class main(QMainWindow):
         # self.toolbarLayout.addWidget(self.importButton)
 
 
-        self.channelsLayout.addLayout(self.channel1Layout)
-        self.channelsLayout.addLayout(self.channel2Layout)
+        self.localLayout.addLayout(self.channel1Layout)
+        self.localLayout.addLayout(self.channel2Layout)
 
-        self.workspaceLayout.addLayout(self.channelsLayout,80)
+        self.liveLayout.addWidget(self.liveViewer)
+
+        self.localTab.setLayout(self.localLayout)
+        self.liveTab.setLayout(self.liveLayout)
+
+        self.channelsSpace.addTab(self.localTab, "Local")
+        self.channelsSpace.addTab(self.liveTab, "Live")
+
+        self.workspaceLayout.addWidget(self.channelsSpace,80)
         self.workspaceLayout.addLayout(self.propertiesLayout,20)
 
         self.mainLayout.addLayout(self.toolbarLayout)

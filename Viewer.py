@@ -63,8 +63,8 @@ class Viewer(QWidget):
         print("Elements created")
 
         self.signalViewer = QFrame(self)
-        self.signalTitle = QLabel("channel1")
-        self.signalTitleEditButton = QPushButton(self.signalViewer)
+        self.viewerTitle = QLabel("channel1")
+        self.viewerTitleEditButton = QPushButton(self.signalViewer)
         self.timeLabel = QLabel("00:00", self.signalViewer)
         self.pauseButton = QPushButton(self.signalViewer)
         self.playButton = QPushButton(self.signalViewer)
@@ -81,8 +81,8 @@ class Viewer(QWidget):
     def stylingUI(self):
         self.setStyleSheet("background-color: #2D2D2D;")
         self.signalViewer.setStyleSheet(background)
-        self.signalTitleEditButton.setIcon(QtGui.QIcon("Assets/Graph controls/edit.png"))
-        self.signalTitleEditButton.setFixedSize(20, 20)
+        self.viewerTitleEditButton.setIcon(QtGui.QIcon("Assets/Graph controls/edit.png"))
+        self.viewerTitleEditButton.setFixedSize(20, 20)
         self.pauseButton.setIcon(QtGui.QIcon("Assets/ControlsButtons/pause.png"))
         self.playButton.setIcon(QtGui.QIcon("Assets/ControlsButtons/play.png"))
         self.backwardButton.setIcon(QtGui.QIcon("Assets/ControlsButtons/backward.png"))
@@ -94,7 +94,7 @@ class Viewer(QWidget):
         self.plot_widget.setBackground('#242424')
         self.signalViewer.setFrameShape(QFrame.StyledPanel)
         self.signalPlotLayout.setContentsMargins(5, 5, 5, 5)
-        self.signalTitle.setStyleSheet(labelStyle)
+        self.viewerTitle.setStyleSheet(labelStyle)
         self.timeLabel.setStyleSheet(labelStyle)
         self.pauseButton.setStyleSheet(signalControlButtonStyle)
         self.playButton.setStyleSheet(signalControlButtonStyle)
@@ -107,8 +107,8 @@ class Viewer(QWidget):
     def layoutSet(self):
         self.signalPlotLayout = QVBoxLayout(self.signalViewer)
         self.titleToolbarLayout = QHBoxLayout()
-        self.titleToolbarLayout.addWidget(self.signalTitle)
-        self.titleToolbarLayout.addWidget(self.signalTitleEditButton)
+        self.titleToolbarLayout.addWidget(self.viewerTitle)
+        self.titleToolbarLayout.addWidget(self.viewerTitleEditButton)
         self.titleToolbarLayout.addSpacerItem(QSpacerItem(40, 0, QSizePolicy.Expanding, QSizePolicy.Minimum))
 
         self.SignalbuttonsLayout = QHBoxLayout()
