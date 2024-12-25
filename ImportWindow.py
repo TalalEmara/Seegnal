@@ -6,7 +6,14 @@ from PyQt5.QtWidgets import QMainWindow, QTabWidget, QWidget, QLabel, QPushButto
 import numpy as np
 import pandas as pd
 from Signal import Signal
+import sys
 import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+url_live = 'https://services.swpc.noaa.gov/json/planetary_k_index_1m.json'
+import requests
+from datetime import datetime
+import matplotlib.dates as mdates
+
 from Styles.ImportWindowStyles import importButtonStyle,browseButtonStyle
 
 class ImportWindow(QMainWindow):
@@ -57,7 +64,7 @@ class ImportWindow(QMainWindow):
         self.importButton.setStyleSheet(importButtonStyle)
 
         self.liveTabLabel.setStyleSheet("font-size:18px; color:#76D4D4;")
-        self.liveInput.setStyleSheet("font-size:13px; padding:2px; border: .5px solid #76D4D4;;")
+        self.liveInput.setStyleSheet("color:white;font-size:13px; padding:2px; border: .5px solid #76D4D4;;")
         self.liveInput.setPlaceholderText("Put the link")
 
         self.plotButton.setStyleSheet(importButtonStyle)
@@ -100,7 +107,7 @@ class ImportWindow(QMainWindow):
     def connectingUI(self):
         self.browseButton.clicked.connect(self.open_file_dialog)
         self.importButton.clicked.connect(lambda: (self.createSignal(self.file_path) if self.file_path else print("No file selected."), self.close()))
-        # self.plotButton.clicked.connect(self.plotLiveSignal)
+        self.plotButton.clicked.connect(lambda: (self.plotLiveSignal(self.liveInput.text()), self.close()))
         print("UI panels are connected to each other")
 
     def open_file_dialog(self):
@@ -133,8 +140,40 @@ class ImportWindow(QMainWindow):
         except Exception as e:
             print(f"An error occurred: {e}")
 
-    def sendData(self,SignalInstance):
-        print("signal is sent")
+    def plotLiveSignal(self, url):
+        self.signal = Signal("Live Signal", url,self.live_signal_processing(url))
+        self.signal.isLive = True
+        self.signalCreated.emit(self.signal)
+        print("Live Signal plotted")
+
+    def live_signal_processing(self, url):
+        response = requests.get(url)
+        data = response.json()
+
+        # Initialize lists for storing extracted data
+        time_numbers = []  # For numerical time representation
+        kp_values = []
+        date = []
+
+        for entry in data:
+            # Extracting the full datetime object
+            full_time = datetime.strptime(entry['time_tag'], '%Y-%m-%dT%H:%M:%S')
+
+            # Convert datetime to a numerical format (for plotting)
+            time_number = mdates.date2num(full_time)  # Convert to numerical format
+
+            # Extracting date part (y-m-d)
+            date_part = full_time.date()
+
+            # Appending results
+            time_numbers.append(time_number)
+            date.append(date_part)
+            kp_values.append(entry['estimated_kp'])  # Appending the kp value
+
+            print(np.column_stack((time_numbers, kp_values)))
+
+        # Return numerical time representation and kp values
+        return  np.column_stack((time_numbers, kp_values))
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

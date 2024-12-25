@@ -249,10 +249,13 @@ class main(QMainWindow):
         self.signals.append(signal)
         signal.colorChanged.connect(self.handleColorChanged)
         signal.hideToggled.connect(self.handleHideToggeled)
-        if signal.channels[0] == 1:
+        if signal.isLive:
+            self.liveViewer.addSignal(signal)
+        elif signal.channels[0] == 1:
             self.viewerChannel1.addSignal(signal)
-        if signal.channels[1] == 1:
+        elif signal.channels[1] == 1:
             self.viewerChannel2.addSignal(signal)
+
         self.updateSelectors()
         print(f"Signal added to main signals array: {signal} channels: {signal.channels}")
 
@@ -309,8 +312,6 @@ class main(QMainWindow):
     def connectPolar(self):
         self.toolbar.polarButton.clicked.connect(lambda: NonRectangularWindow().show())
         print("Polar window is connected")
-    def ConnectLive(self):
-        print("show live Signal")
 
 
 if __name__ == "__main__":
