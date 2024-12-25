@@ -118,26 +118,29 @@ class ToolBar(QWidget):
 
         print("layout set")
 
-    def toggleRewindButton(self):
-            self.isRewind = not self.isRewind
-            if self.isRewind:
-                self.rewindButton.setStyleSheet(rewindOnButtonStyle)
-            else:
-                self.rewindButton.setStyleSheet(rewindOffButtonStyle)
+    # def toggleRewindButton(self):
+    #         self.isRewind = not self.isRewind
+    #         if self.isLinked:
+    #             if self.isRewind:
+    #                 self.rewindButton.setStyleSheet(rewindOnButtonStyle)
+    #                 print("rewind on")
+    #             else:
+    #                 self.rewindButton.setStyleSheet(rewindOffButtonStyle)
+    #                 print("rewind off")
 
-    def toggleLinkedButton(self):
-            self.isLinked = not self.isLinked
-            if self.isLinked:
-                self.linkedButton.setStyleSheet(linkedButtonOnStyle)
-                self.linkedButton.setText("Linked")
-            else:
-                self.linkedButton.setStyleSheet(linkedButtonOffStyle)
-                self.linkedButton.setText("Link")
+    # def toggleLinkedButton(self):
+    #         self.isLinked = not self.isLinked
+    #         if self.isLinked:
+    #             self.linkedButton.setStyleSheet(linkedButtonOnStyle)
+    #             self.linkedButton.setText("Linked")
+    #         else:
+    #             self.linkedButton.setStyleSheet(linkedButtonOffStyle)
+    #             self.linkedButton.setText("Link")
 
 
     def connectingUI(self):
-        self.rewindButton.clicked.connect(self.toggleRewindButton)
-        self.linkedButton.clicked.connect(self.toggleLinkedButton)
+        # self.rewindButton.clicked.connect(self.toggleRewindButton)
+        # self.linkedButton.clicked.connect(self.toggleLinkedButton)
         print("UI panels is connected to each other")
 
     def importSignal(self):

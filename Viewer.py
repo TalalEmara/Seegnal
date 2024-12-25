@@ -14,14 +14,17 @@ from Styles.viewerStyles import (
     panSliderStyle
 )
 
-from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtCore import QTimer, Qt, pyqtSignal
 from PyQt5 import QtGui
 import pyqtgraph as pg
 import numpy as np
 from Signal import Signal
 
 class Viewer(QWidget):
+    rangeChanged = pyqtSignal(pg.PlotWidget)  # Emit the PlotWidget for synchronization
+
     def __init__(self):
+
         super().__init__()
         print(f"{self} initialized")
         self.initializeAttributes()
@@ -42,7 +45,7 @@ class Viewer(QWidget):
         self.signals = [] 
         self.plot_curves = []  
         self.current_indices = {}
-        
+
         self.pan_update_timer = QTimer()
         self.pan_update_timer.setInterval(100)  
         self.is_panning = False
@@ -141,6 +144,7 @@ class Viewer(QWidget):
         self.plot_widget.sigXRangeChanged.connect(self.startPanUpdate)
         # self.plot_widget.sigXRangeChanged.connect(self.adjustPlotLimits)
         # self.plot_widget.sigYRangeChanged.connect(self.adjustPlotLimits)
+        self.plot_widget.sigXRangeChanged.connect(self.emitRangeChange)
 
         print("UI panels are connected to each other")
 
@@ -347,7 +351,10 @@ class Viewer(QWidget):
         # Combine visible data for all signals
         return visible_x_data, visible_y_data
 
-    #trial
+    def emitRangeChange(self):
+        # Emit the plot_widget itself when the range changes
+        self.rangeChanged.emit(self.plot_widget)
+        #trial
     # def addNewSignal(self): #Trial , to add multiple signals and test with it
     #     new_signal = Signal()
     #     new_signal.name = f"Signal {len(self.signals) + 1}" 
