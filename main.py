@@ -32,6 +32,25 @@ class main(QMainWindow):
         self.layoutSet()
         self.setAttribute(Qt.WA_StyledBackground, True)
         self.setStyleSheet("background-color:#2D2D2D;")
+        self.channelsSpace.setStyleSheet("""
+               QTabWidget::pane {
+                   border-top: 1px solid #76D4D4;
+               }
+               QTabBar::tab {
+                   background-color: #2d2d2d;  /* Tab background color */
+                   color:#EFEFEF;
+                   padding: 5px;
+                   border: 1px solid #C4C4C3;
+               }
+               QTabBar::tab:selected {
+                    color:#2d2d2d;
+                   background-color: #76D4D4;  /* Background color of selected tab */
+               }
+               QTabBar::tab:hover {
+                    color:#2d2d2d;
+                   background-color: #a6f1f1;  /* Background color when hovered */
+               }
+           """)
 
     def createUIElements(self):
 
