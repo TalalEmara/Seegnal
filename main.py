@@ -212,6 +212,7 @@ class main(QMainWindow):
     def addSignal(self, signal):
         self.signals.append(signal)
         signal.colorChanged.connect(self.handleColorChanged)
+        signal.hideToggled.connect(self.handleHideToggeled)
         if signal.channels[0] == 1:
             self.viewerChannel1.addSignal(signal)
         if signal.channels[1] == 1:
@@ -228,6 +229,13 @@ class main(QMainWindow):
             self.viewerChannel2.addSignal(signal)
 
         self.updateSelectors()
+
+
+    def handleHideToggeled(self, signal,id):
+        if id == 0:
+            self.viewerChannel1.toggleHide(signal)
+        else:
+            self.viewerChannel2.toggleHide(signal)
 
     def handleColorChanged(self,signal):
         self.viewerChannel1.updateSignalColor(signal)

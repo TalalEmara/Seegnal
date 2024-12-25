@@ -226,6 +226,13 @@ class Viewer(QWidget):
 
             self.adjustPlotLimits()
 
+    def toggleHide(self, signal):
+        for plot_curve in self.plot_curves:
+            curve_name = plot_curve.opts.get('name')
+            print(f"Checking curve: {curve_name}")
+            if curve_name == signal.name:
+                plot_curve.setVisible(signal.isShown[self.id])
+
     #button functions
     def play(self):
         if not self.is_playing:  
