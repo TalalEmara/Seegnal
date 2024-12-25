@@ -194,9 +194,9 @@ class Viewer(QWidget):
             self.timeLabel.setText(f"{int(max_time // 60):02}:{int(max_time % 60):02}.{int((max_time % 1) * 1000):03}")
 
             # Adjust the visible range to simulate sliding
-            visible_duration = .2  # Duration of the visible window in seconds
-            time_min = max(0, max_time - visible_duration)
-            time_max = max_time
+            visible_duration = 1  # Duration of the visible window in seconds
+            time_min = max(0, max_time - visible_duration)  # Ensure the minimum time is never negative
+            time_max = max(max_time, visible_duration)  # Extend the range to include the visible duration initially
             self.plot_widget.setXRange(time_min, time_max, padding=0)
 
             self.adjustPlotLimits()
