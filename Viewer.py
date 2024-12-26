@@ -26,6 +26,7 @@ class Viewer(QWidget):
     def __init__(self):
 
         super().__init__()
+        self.selected_region = None
         print(f"{self} initialized")
         self.initializeAttributes()
         self.initializeUI()
@@ -33,6 +34,9 @@ class Viewer(QWidget):
 
     def initializeAttributes(self):
         print("Attributes")
+        self.selected_signal_data = []  # Store selected data
+        self.selected_region = None
+
         self.id = 0
         
         self.current_index = 0
@@ -393,7 +397,53 @@ class Viewer(QWidget):
     def emitRangeChange(self):
         # Emit the plot_widget itself when the range changes
         self.rangeChanged.emit(self.plot_widget)
-        #trial
+
+    def glue_rectangle(self):
+        """Add a rectangle to select a region on the plot."""
+        if self.selected_region:
+            # If a region already exists, remove it first
+            self.plot_widget.removeItem(self.selected_region)
+
+        # Create a LinearRegionItem (rectangle) with an initial range
+        self.selected_region = pg.LinearRegionItem(
+            values=[self.plot_widget.viewRange()[0][0] + 50, self.plot_widget.viewRange()[0][0] + 150],
+            movable=True,
+            bounds=self.plot_widget.viewRange()[0]
+        )
+        self.selected_region.sigRegionChangeFinished.connect(self.handle_region_change)
+        self.plot_widget.addItem(self.selected_region)  # Add the rectangle to the plot
+
+    def handle_region_change(self):
+        """Handle updates to the region and capture the selected data."""
+        self.selected_signal_data = []  # Reset selected data
+
+        # Get the selected region's x-axis limits
+        selected_x_min, selected_x_max = self.selected_region.getRegion()
+
+        # Get the visible x and y data within the current plot range
+        visible_x_data, visible_y_data = self.get_visible_frame()
+
+        # Filter data points within the selected region and the visible plot range
+        for x_data, y_data in zip(visible_x_data, visible_y_data):
+            # Only consider data that falls within both the selected region and visible range
+            selected_indices = np.where((x_data >= selected_x_min) & (x_data <= selected_x_max))[0]
+
+            if selected_indices.size > 0:
+                # Extract the x and y data for the selected indices
+                selected_x = x_data[selected_indices]
+                selected_y = y_data[selected_indices]
+
+                # Append the filtered data (overlapping with both the selected region and visible region)
+                self.selected_signal_data.append((selected_x, selected_y))
+
+    def get_selected_data(self):
+        """Return the data selected within the region."""
+        return self.selected_signal_data
+
+    def mouseDoubleClickEvent(self, event):
+        """Handle double-click event on the plot widget."""
+        if self.plot_widget.geometry().contains(event.pos()):
+            self.glue_rectangle()        #trial
     # def addNewSignal(self): #Trial , to add multiple signals and test with it
     #     new_signal = Signal()
     #     new_signal.name = f"Signal {len(self.signals) + 1}" 

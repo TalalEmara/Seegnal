@@ -295,12 +295,25 @@ class main(QMainWindow):
         print("Toolbar Controls is connecting to viewers")
 
     def connectGlue(self):
-        frame1_x, frame1_y =self.viewerChannel1.get_visible_frame()
-        frame2_x, frame2_y = self.viewerChannel2.get_visible_frame()
+        """Connect glue functionality to the viewers."""
+
+        # Access the selected data from both viewers
+        frame1_x, frame1_y = zip(*self.viewerChannel1.get_selected_data())
+        frame2_x, frame2_y = zip(*self.viewerChannel2.get_selected_data())
+
+        # Process or pass the captured frames as needed
+        print("Selected data from Viewer 1 - X:", frame1_x, "Y:", frame1_y)
+        print("Selected data from Viewer 2 - X:", frame2_x, "Y:", frame2_y)
+
+        # frame1_x, frame1_y =self.viewerChannel1.get_selected_data()
+        # frame2_x, frame2_y = self.viewerChannel2.get_selected_data()
+
+        # frame1_x, frame1_y =self.viewerChannel1.glue_rectangle()
+        # frame2_x, frame2_y = self.viewerChannel2.glue_rectangle()
 
         # Process the captured frames as needed
-        print("Frame from Viewer 1 - X:", frame1_x, "Y:", frame1_y)
-        print("Frame from Viewer 2 - X:", frame2_x, "Y:", frame2_y)
+        # print("Frame from Viewer 1 - X:", frame1_x, "Y:", frame1_y)
+        # print("Frame from Viewer 2 - X:", frame2_x, "Y:", frame2_y)
         self.glueview = GlueWindow()
 
         self.glueview.init_plot(frame1_x, frame1_y, frame2_x, frame2_y)  # Pass the frame data
