@@ -211,7 +211,10 @@ class Viewer(QWidget):
                     max_time = max(max_time, time_data[current_index])
                     current_index += 1
                 else:
-                    current_index = len(time_data) - 1
+                    if self.is_rewinding:
+                        current_index = 0
+                    else:
+                        current_index = len(time_data) - 1
 
                 self.current_indices[signal.name] = current_index
 
