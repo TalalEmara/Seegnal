@@ -1,3 +1,4 @@
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QFrame, QLabel, QPushButton, QSpacerItem, QSizePolicy, QSlider, QApplication,
     QMainWindow
@@ -77,9 +78,13 @@ class Viewer(QWidget):
         self.rewindButton = QPushButton(self.signalViewer)
         self.rewindButton.setCheckable(True)
         # self.addSignalButton = QPushButton("Add Signal", self.signalViewer) #trial adding signal button
-        self.panSlider = QSlider(Qt.Horizontal, self.signalViewer)
+        self.panSlider = QSlider(Qt.Horizontal)
         self.panSlider.setRange(0, 100)
         self.panSlider.setValue(0)
+        self.speedSliderLabel = QLabel("Speed")
+        self.speedSlider = QSlider(Qt.Horizontal)
+        self.speedSlider.setRange(0, 100)
+        self.speedSlider.setValue(50)
         self.plot_widget = pg.PlotWidget()
 
     def stylingUI(self):
@@ -95,6 +100,8 @@ class Viewer(QWidget):
         self.rewindButton.setStyleSheet(rewindOffButtonStyle)
         self.panSlider.setMinimumWidth(100)
         self.panSlider.setMaximumWidth(400)
+        self.speedSlider.setMinimumWidth(100)
+        self.speedSlider.setMaximumWidth(400)
         self.plot_widget.setBackground('#242424')
         self.signalViewer.setFrameShape(QFrame.StyledPanel)
         self.signalPlotLayout.setContentsMargins(5, 5, 5, 5)
@@ -106,6 +113,8 @@ class Viewer(QWidget):
         self.backwardButton.setStyleSheet(signalControlButtonStyle)
         self.rewindButton.setStyleSheet(rewindOffButtonStyle)
         self.panSlider.setStyleSheet(panSliderStyle)
+        self.speedSliderLabel.setStyleSheet(labelStyle)
+        self.speedSlider.setStyleSheet(panSliderStyle)
         print("Elements are styled")
 
     def layoutSet(self):
@@ -125,7 +134,8 @@ class Viewer(QWidget):
         self.SignalbuttonsLayout.addWidget(self.forwardButton)
         self.SignalbuttonsLayout.addWidget(self.rewindButton)
         self.SignalbuttonsLayout.addStretch(1)
-        self.SignalbuttonsLayout.addWidget(self.panSlider)
+        self.SignalbuttonsLayout.addWidget(self.speedSliderLabel)
+        self.SignalbuttonsLayout.addWidget(self.speedSlider)
         self.SignalbuttonsLayout.addStretch(1)
         self.signalPlotLayout.addLayout(self.titleToolbarLayout)
         self.signalPlotLayout.addWidget(self.plot_widget)
@@ -144,6 +154,7 @@ class Viewer(QWidget):
         self.backwardButton.clicked.connect(self.backward)
         self.rewindButton.clicked.connect(self.toggleRewind)
         # self.addSignalButton.clicked.connect(self.addNewSignal)  #trial adding signal button
+        self.speedSlider.valueChanged.connect(self.updatePlotSpeed)
         self.panSlider.valueChanged.connect(self.updatePanSlider)
         self.pan_update_timer.timeout.connect(self.syncPanSlider)
         self.plot_widget.sigXRangeChanged.connect(self.startPanUpdate)
