@@ -299,9 +299,10 @@ class main(QMainWindow):
         frame2_x, frame2_y = self.viewerChannel2.get_visible_frame()
 
         # Process the captured frames as needed
-        # print("Frame from Viewer 1 - X:", frame1_x, "Y:", frame1_y)
-        # print("Frame from Viewer 2 - X:", frame2_x, "Y:", frame2_y)
+        print("Frame from Viewer 1 - X:", frame1_x, "Y:", frame1_y)
+        print("Frame from Viewer 2 - X:", frame2_x, "Y:", frame2_y)
         self.glueview = GlueWindow()
+
         self.glueview.init_plot(frame1_x, frame1_y, frame2_x, frame2_y)  # Pass the frame data
         self.glueview.show()
 
