@@ -2,7 +2,8 @@ import sys
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QHBoxLayout, QApplication, QMainWindow, QVBoxLayout, QGroupBox
+from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QHBoxLayout, QApplication, QMainWindow, QVBoxLayout, \
+    QGroupBox, QSlider
 from Styles.toolBarStyle import labelStyle, signalControlButtonStyle, groupBoxStyle,rewindOnButtonStyle,rewindOffButtonStyle,linkedButtonOffStyle,linkedButtonOnStyle
 
 
@@ -38,6 +39,12 @@ class ToolBar(QWidget):
         self.backwardButton = QPushButton()
         self.forwardButton = QPushButton()
         self.rewindButton = QPushButton()
+
+        self.speedSliderLabel = QLabel("Speed")
+        self.speedSlider = QSlider(Qt.Horizontal)
+        self.speedSlider.setRange(0, 100)
+        self.speedSlider.setValue(50)
+
         #Linked
         self.linkedButton = QPushButton("Link")
         #Glue
@@ -70,6 +77,28 @@ class ToolBar(QWidget):
         self.backwardButton.setIcon(QIcon("Assets/ControlsButtons/backward.png"))
         self.forwardButton.setIcon(QIcon("Assets/ControlsButtons/forward.png"))
         self.rewindButton.setIcon(QIcon("Assets/ControlsButtons/rewindOff.png"))
+
+        self.speedSliderLabel.setStyleSheet("""
+                                                QLabel {
+                                                    margin:20px;
+                                                    color: #76D4D4;
+                                                    font-family: Sofia sans;
+                                                    font-weight: semiBold;
+                                                    font-size: 20px;
+                                                }
+                                                """)
+        self.speedSlider.setMinimumWidth(100)
+        self.speedSlider.setMaximumWidth(400)
+        self.speedSlider.setStyleSheet("""
+                                        QSlider::handle {
+                                                        background-color: #76D4D4;
+                                                        width: 5px;
+                                                        height: 7px;
+                                                        border-radius: 5px;
+                                                    }
+                                            
+                                        """
+                                        )
 
         self.controlsGroupBox.setStyleSheet(groupBoxStyle)
         self.pauseButton.setStyleSheet(signalControlButtonStyle)
@@ -107,6 +136,8 @@ class ToolBar(QWidget):
         self.mainLayout.addWidget(self.logoLabel, 1)
         self.mainLayout.addWidget(self.importButton, 1)
         self.mainLayout.addWidget(self.controlsGroupBox, 3)
+        self.mainLayout.addWidget(self.speedSliderLabel)
+        self.mainLayout.addWidget(self.speedSlider)
         self.mainLayout.addWidget(self.glueButton, 1)
         self.mainLayout.addWidget(self.polarButton, 1)
         self.mainLayout.addStretch(1)
