@@ -198,17 +198,23 @@ class Viewer(QWidget):
             # Remove the signal from the list
             self.signals.remove(signal)
 
-            # Find and remove the plot curve associated with the signal
-            plot_curve_to_remove = next(
-                (curve for curve in self.plot_curves if curve.opts.get('name') == signal.location), None)
-            if plot_curve_to_remove:
-                self.plot_widget.removeItem(plot_curve_to_remove)  # Remove the curve from the plot
-                self.plot_curves.remove(plot_curve_to_remove)  # Remove the curve from the list
+            # Find the plot curve associated with the signal and remove it
+            for plot_curve in self.plot_curves:
+                # Check if the plot curve's name matches the signal's name
+                if plot_curve.opts.get('name') == signal.location:
+                    self.plot_widget.removeItem(plot_curve)  # Remove the curve from the plot
+                    self.plot_curves.remove(plot_curve)  # Remove the curve from the list
+                    break
 
             # Reset the signal index
             signal.shift_time = 0
             self.current_indices[signal.location] = 0
             print(f"Signal '{signal.name}' removed")
+
+    def updateSignalColor(self, signal: Signal):
+        for plot_curve in self.plot_curves:
+            if plot_curve.opts.get('name') == signal.location:
+                plot_curve.setPen(pg.mkPen(signal.colors[self.id]))
 
     def updatePlot(self):
         if self.is_playing and self.signals:
