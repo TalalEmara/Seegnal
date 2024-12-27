@@ -68,7 +68,7 @@ class Viewer(QWidget):
         print("Elements created")
 
         self.signalViewer = QFrame(self)
-        self.viewerTitle = QLabel("channel1")
+        self.viewerTitle = QLabel(f"Channel {self.id}")
         self.viewerTitleEditButton = QPushButton(self.signalViewer)
         self.timeLabel = QLabel("00:00", self.signalViewer)
         self.pauseButton = QPushButton(self.signalViewer)
@@ -183,11 +183,11 @@ class Viewer(QWidget):
             plot_curve.setData(signal.getShitedTime(), signal.data[:, 1])
 
             # Assign the signal name to the plot curve for later identification
-            plot_curve.opts['name'] = signal.name
+            plot_curve.opts['name'] = signal.location
 
             # Store the plot curve in the list
             self.plot_curves.append(plot_curve)
-            self.current_indices[signal.name] = 0
+            self.current_indices[signal.location] = 0
             print(f"Signal '{signal.name}' added with color {signal.colors[1]}")
 
     def removeSignal(self, signal: Signal):
@@ -198,26 +198,26 @@ class Viewer(QWidget):
             # Find the plot curve associated with the signal and remove it
             for plot_curve in self.plot_curves:
                 # Check if the plot curve's name matches the signal's name
-                if plot_curve.opts.get('name') == signal.name:
+                if plot_curve.opts.get('name') == signal.location:
                     self.plot_widget.removeItem(plot_curve)  # Remove the curve from the plot
                     self.plot_curves.remove(plot_curve)  # Remove the curve from the list
                     break
 
             # Reset the signal index
             signal.shift_time = 0
-            self.current_indices[signal.name] = 0
+            self.current_indices[signal.location] = 0
             print(f"Signal '{signal.name}' removed")
 
     def updateSignalColor(self, signal: Signal):
         for plot_curve in self.plot_curves:
-            if plot_curve.opts.get('name') == signal.name:
+            if plot_curve.opts.get('name') == signal.location:
                 plot_curve.setPen(pg.mkPen(signal.colors[self.id]))
     def updatePlot(self):
         if self.is_playing and self.signals:
             max_time = 0
 
             for signal, plot_curve in zip(self.signals, self.plot_curves):
-                current_index = self.current_indices[signal.name]
+                current_index = self.current_indices[signal.location]
                 time_data = signal.getShitedTime()
                 amplitude_data = signal.data[:, 1]
 
@@ -231,7 +231,7 @@ class Viewer(QWidget):
                     else:
                         current_index = len(time_data) - 1
 
-                self.current_indices[signal.name] = current_index
+                self.current_indices[signal.location] = current_index
 
             # Update time label with the maximum time
             self.timeLabel.setText(f"{int(max_time // 60):02}:{int(max_time % 60):02}.{int((max_time % 1) * 1000):03}")
@@ -267,12 +267,12 @@ class Viewer(QWidget):
     def forward(self):
         print("Viewer is moving 5 seconds forward")
         for signal in self.signals:
-            current_index = self.current_indices[signal.name]
+            current_index = self.current_indices[signal.location]
             new_index = current_index + int(self.time_jump / (signal.data[1, 0] - signal.data[0, 0])) 
             if new_index < len(signal.data):
-                self.current_indices[signal.name] = new_index
+                self.current_indices[signal.location] = new_index
             else:
-                self.current_indices[signal.name] = len(signal.data) - 1 
+                self.current_indices[signal.location] = len(signal.data) - 1
                 print("Reached the end of the signal")
 
         self.updatePlot()
@@ -280,12 +280,12 @@ class Viewer(QWidget):
     def backward(self):
         print("Viewer is moving 5 seconds backward")
         for signal in self.signals:
-            current_index = self.current_indices[signal.name]
+            current_index = self.current_indices[signal.location]
             new_index = current_index - int(self.time_jump / (signal.data[1, 0] - signal.data[0, 0]))  
             if new_index >= 0:
-                self.current_indices[signal.name] = new_index
+                self.current_indices[signal.location] = new_index
             else:
-                self.current_indices[signal.name] = 0
+                self.current_indices[signal.location] = 0
                 print("At the start of the signal")
 
         self.updatePlot()
@@ -316,7 +316,7 @@ class Viewer(QWidget):
         current_times = []
         current_amplitudes=[]
         for signal in self.signals:
-            current_index = self.current_indices[signal.name]
+            current_index = self.current_indices[signal.location]
             if current_index < len(signal.data):  
                 current_time = signal.data[current_index, 0]
                 current_times.append(current_time)

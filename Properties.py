@@ -14,7 +14,7 @@ class Properties(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.signal = Signal("heart","d/dd/d",[1,0,1,1,0])
+        self.signal = Signal("No Signal selected","No location",[1,0,1,1,0])
         self.signal.colors[0] = "white"
         self.initializeAttributes()
         self.initializeUI()

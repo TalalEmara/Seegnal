@@ -63,10 +63,17 @@ class main(QMainWindow):
         self.selectorChannel2 = Selector()
         self.selectorChannel2.selectorId = 1
 
+        self.selectorChannel1.selectorNameLabel.setText(f"Channel {self.selectorChannel1.selectorId +1}")
+        self.selectorChannel2.selectorNameLabel.setText(f"Channel {self.selectorChannel2.selectorId+ 1}")
+
+
         self.viewerChannel1 = Viewer()
         self.viewerChannel2 = Viewer()
         self.viewerChannel1.id = 0
         self.viewerChannel2.id = 1
+        self.viewerChannel1.viewerTitle.setText(f"Channel {self.viewerChannel1.id +1}")
+        self.viewerChannel2.viewerTitle.setText(f"Channel {self.viewerChannel2.id+ 1}")
+
 
         self.propertiesPanel = Properties()
 
@@ -278,6 +285,7 @@ class main(QMainWindow):
     def handleColorChanged(self,signal):
         self.viewerChannel1.updateSignalColor(signal)
         self.viewerChannel2.updateSignalColor(signal)
+        self.updateSelectors()
 
     def updateSelectors(self):
         self.updateSelector(self.selectorChannel1)

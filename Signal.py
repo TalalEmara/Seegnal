@@ -2,6 +2,7 @@ from PyQt5.QtCore import pyqtSignal, QObject
 
 
 class Signal(QObject):
+    nameChanged = pyqtSignal(object)
     colorChanged = pyqtSignal(object)
     hideToggled = pyqtSignal(object,int)
     def __init__(self, name, location, data):
@@ -15,6 +16,9 @@ class Signal(QObject):
         self.isShown = [True , True]
         self.shift_time = 0 # maybe need one for each channel
 
+    def changeName(self,name):
+        self.name = name
+        self.nameChanged.emit(self)
     def changeChannel1Color(self,color):
         self.colors[0] = color
         self.colorChanged.emit(self)

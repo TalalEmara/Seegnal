@@ -118,6 +118,7 @@ class Selector(QWidget):
 
     def connectingUI(self):
         self.table.itemClicked.connect(self.on_item_clicked)
+        self.table.itemChanged.connect(self.on_item_changed)
         print("UI panels is connected to each other")
 
 
@@ -154,6 +155,14 @@ class Selector(QWidget):
             self.table.setCellWidget(row, 4, switchButton)
 
         print("signals are placed")
+
+    def on_item_changed(self, item):
+        row = item.row()
+        column = item.column()
+        if column == 1:
+            self.signals[row].changeName( item.text())
+
+        self.properties.setSignal(self.signals[row])
 
     def on_item_clicked(self, item):
         row = item.row()
