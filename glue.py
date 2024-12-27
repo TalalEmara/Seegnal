@@ -1,5 +1,6 @@
 import sys
 import numpy as np
+from PyQt5.QtCore import QMargins
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QSizePolicy, QWidget, QMainWindow, \
     QFileDialog, QApplication, QComboBox
 import pyqtgraph as pg
@@ -43,43 +44,111 @@ class GlueWindow(QMainWindow):
 
         self.title_toolbar_layout = QHBoxLayout()
         self.title = QLabel("Gluing Signals")
-        self.title.setStyleSheet("color: #EFEFEF; font-size: 20px; font-weight: bold;")
+        self.title.setStyleSheet("""color: #76D4D4;
+                                                font-family: Sofia sans;
+                                                font-weight: 600;
+                                                font-size: 28px;
+                                                padding-left: 15px;""")
         self.title.setFixedHeight(70)
         self.title_toolbar_layout.addWidget(self.title)
 
         self.snapshot_button = QPushButton("SnapShot", self)
         self.snapshot_button.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.snapshot_button.setStyleSheet("background-color: #EFEFEF; border-radius: 10px; padding: 10px;")
+        self.snapshot_button.setStyleSheet("""
+                                            QPushButton{
+                                            color: #2D2D2D;
+                                            background-color: #76D4D4;
+                                            font-family: Sofia sans;
+                                            font-size: 18px;
+                                            border: 2px solid #efefef;
+                                            border-radius: 8px;
+                                            padding:8px;
+                                        }
+                                        """)
         self.snapshot_button.clicked.connect(self.take_snapshot)
-        self.title_toolbar_layout.addWidget(self.snapshot_button)
 
         self.export_pdf_button = QPushButton("Export to PDF", self)
         self.export_pdf_button.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.export_pdf_button.setStyleSheet("background-color: #EFEFEF; border-radius: 10px; padding: 10px;")
+        self.export_pdf_button.setStyleSheet("""
+                                            QPushButton{
+                                            color: #2d2d2d;
+                                            background-color: #76D4D4;
+                                            font-family: Sofia sans;
+                                            font-size: 18px;
+                                            border: 2px solid #efefef;
+                                            border-radius: 8px;
+                                            padding:8px;
+                                        }
+                                        """)
         self.export_pdf_button.clicked.connect(self.export_to_pdf)
-        self.title_toolbar_layout.addWidget(self.export_pdf_button)
 
         # Dropdown for interpolation methods
         self.interpolation_combobox = QComboBox(self)
         self.interpolation_combobox.addItem("Linear")
         self.interpolation_combobox.addItem("RBF")
         self.interpolation_combobox.addItem("Nearest Neighbor")
+        self.interpolation_combobox.setStyleSheet("""
+                                                    QComboBox{
+                                                        color: #2d2d2d;
+                                                        font-size:18px;
+                                                        background-color: #76d4d4;
+                                                        border: 1px solid #76d4d4;
+                                                        border-radius: 5px;  
+                                                    }
+                                                    QComboBox::down-arrow {
+                                                    color:#EFEFEF;
+                                                    width:5px;
+                                                    }
+                                                    
+                                                    QComboBox QAbstractItemView {
+                                                    selection-background-color: #76d4d4; 
+                                                    selection-color: #2d2d2d;      
+                                                    background-color: #efefef; 
+                                                    color: #2d2d2d;      
+                                                }
+                                                
+                                                """)
         self.interpolation_combobox.currentIndexChanged.connect(self.update_interpolation_method)
 
         self.title_toolbar_layout.addWidget(self.interpolation_combobox)
+        self.title_toolbar_layout.addStretch()
+        self.title_toolbar_layout.addWidget(self.snapshot_button)
+        self.title_toolbar_layout.addWidget(self.export_pdf_button)
 
-        graph_row = QHBoxLayout()
+        graph_row = QVBoxLayout()
         graph_row.addWidget(self.signal_canvas_original)
         graph_row.addWidget(self.signal_canvas_interpolated)
 
         button_row = QHBoxLayout()
         self.backward_button = QPushButton("Backward")
-        self.backward_button.setStyleSheet("background-color: #EFEFEF; padding: 10px; border-radius: 10px;")
+        self.backward_button.setStyleSheet("""
+                                            QPushButton{
+                                            color: #2D2D2D;
+                                            background-color: #76D4D4;
+                                            font-family: Sofia sans;
+                                            font-weight: Bold;
+                                            font-size: 15px;
+                                            border: 2px solid #efefef;
+                                            border-radius: 8px;
+                                            margin:10px;
+                                        }
+                                        """)
         self.backward_button.setFixedSize(150, 70)
         self.backward_button.clicked.connect(self.backward)
 
         self.forward_button = QPushButton("Forward")
-        self.forward_button.setStyleSheet("background-color: #EFEFEF; padding: 10px; border-radius: 10px;")
+        self.forward_button.setStyleSheet("""
+                                            QPushButton{
+                                            color: #2D2D2D;
+                                            background-color: #76D4D4;
+                                            font-family: Sofia sans;
+                                            font-weight: 500;
+                                            font-size: 15px;
+                                            border: 2px solid #efefef;
+                                            border-radius: 8px;
+                                            margin:10px;
+                                        }
+                                        """)
         self.forward_button.setFixedSize(150, 70)
         self.forward_button.clicked.connect(self.forward)
 
