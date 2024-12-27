@@ -217,7 +217,7 @@ class Viewer(QWidget):
             max_time = 0
 
             for signal, plot_curve in zip(self.signals, self.plot_curves):
-                current_index = self.current_indices[signal.location]
+                current_index = signal.currentIndex[self.id]
                 time_data = signal.getShitedTime()
                 amplitude_data = signal.data[:, 1]
 
@@ -231,6 +231,7 @@ class Viewer(QWidget):
                     else:
                         current_index = len(time_data) - 1
 
+                signal.currentIndex[self.id] = current_index
                 self.current_indices[signal.location] = current_index
 
             # Update time label with the maximum time

@@ -15,6 +15,7 @@ class Signal(QObject):
         self.isLive = False
         self.isShown = [True , True]
         self.shift_time = 0 # maybe need one for each channel
+        self.currentIndex = [0,0]
 
     def changeName(self,name):
         self.name = name

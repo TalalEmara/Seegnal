@@ -268,9 +268,15 @@ class main(QMainWindow):
     def handleChannelChange(self, signal):
         if signal.channels == [1,0]:
             self.viewerChannel2.removeSignal(signal)
+            #signal Start Time
+            signal.currentIndex[0] = signal.currentIndex[1]
+            print(f"Signal index{signal.currentIndex}")
             self.viewerChannel1.addSignal(signal)
         elif signal.channels == [0,1]:
             self.viewerChannel1.removeSignal(signal)
+            #signal Start Time
+            signal.currentIndex[1] = signal.currentIndex[0]
+            print(f"Signal index{signal.currentIndex}")
             self.viewerChannel2.addSignal(signal)
 
         self.updateSelectors()
