@@ -39,7 +39,7 @@ class Viewer(QWidget):
         self.selected_region = None
 
         self.id = 0
-        
+
         self.current_index = 0
         self.is_playing = True
         self.is_rewinding = False
@@ -48,17 +48,17 @@ class Viewer(QWidget):
         self.timer = QTimer()
         self.timer.timeout.connect(self.updatePlot)
         self.timer.start(self.plot_speed)
-        self.signals = [] 
-        self.plot_curves = []  
+        self.signals = []
+        self.plot_curves = []
         self.current_indices = {}
 
         self.pan_update_timer = QTimer()
-        self.pan_update_timer.setInterval(100)  
+        self.pan_update_timer.setInterval(100)
         self.is_panning = False
 
 
     def initializeUI(self):
-    
+
         print("UI initialized")
         self.createUIElements()
         self.layoutSet()
@@ -69,13 +69,13 @@ class Viewer(QWidget):
 
         self.signalViewer = QFrame(self)
         self.viewerTitle = QLabel(f"Channel {self.id}")
-        self.viewerTitleEditButton = QPushButton(self.signalViewer)
-        self.timeLabel = QLabel("00:00", self.signalViewer)
-        self.pauseButton = QPushButton(self.signalViewer)
-        self.playButton = QPushButton(self.signalViewer)
-        self.backwardButton = QPushButton(self.signalViewer)
-        self.forwardButton = QPushButton(self.signalViewer)
-        self.rewindButton = QPushButton(self.signalViewer)
+        self.viewerTitleEditButton = QPushButton()
+        self.timeLabel = QLabel("00:00")
+        self.pauseButton = QPushButton()
+        self.playButton = QPushButton()
+        self.backwardButton = QPushButton()
+        self.forwardButton = QPushButton()
+        self.rewindButton = QPushButton()
         self.rewindButton.setCheckable(True)
         # self.addSignalButton = QPushButton("Add Signal", self.signalViewer) #trial adding signal button
         self.panSlider = QSlider(Qt.Horizontal)
@@ -173,20 +173,23 @@ class Viewer(QWidget):
 
             # Adjust signal data based on the current X-range to make it start from current_x_range[0]
             signal_start_time = signal.data[0, 0]
-            signal.shift_time = current_x_range[0] - signal_start_time  # Time shift to start at current_x_range[0]
+            if current_x_range[0] != 0:
+                signal.shift_time = current_x_range[1]
 
-            # adjusted_time_data = signal.data[:, 0] + shift_time
+            # Check if the signal already has a plot curve; if not, create it
+            existing_curve = next((curve for curve in self.plot_curves if curve.opts.get('name') == signal.location),
+                                  None)
+            if not existing_curve:
+                # Create the plot curve for the signal if it doesn't exist
+                plot_curve = self.plot_widget.plot(pen=pg.mkPen(signal.colors[self.id]))
+                plot_curve.setData(signal.getShitedTime(), signal.data[:, 1])
 
-            # Create the plot curve for the signal
-            plot_curve = self.plot_widget.plot(pen=pg.mkPen(signal.colors[self.id]))
+                # Assign the signal name to the plot curve for later identification
+                plot_curve.opts['name'] = signal.location
 
-            plot_curve.setData(signal.getShitedTime(), signal.data[:, 1])
+                # Store the plot curve in the list
+                self.plot_curves.append(plot_curve)
 
-            # Assign the signal name to the plot curve for later identification
-            plot_curve.opts['name'] = signal.location
-
-            # Store the plot curve in the list
-            self.plot_curves.append(plot_curve)
             self.current_indices[signal.location] = 0
             print(f"Signal '{signal.name}' added with color {signal.colors[1]}")
 
@@ -195,29 +198,27 @@ class Viewer(QWidget):
             # Remove the signal from the list
             self.signals.remove(signal)
 
-            # Find the plot curve associated with the signal and remove it
-            for plot_curve in self.plot_curves:
-                # Check if the plot curve's name matches the signal's name
-                if plot_curve.opts.get('name') == signal.location:
-                    self.plot_widget.removeItem(plot_curve)  # Remove the curve from the plot
-                    self.plot_curves.remove(plot_curve)  # Remove the curve from the list
-                    break
+            # Find and remove the plot curve associated with the signal
+            plot_curve_to_remove = next(
+                (curve for curve in self.plot_curves if curve.opts.get('name') == signal.location), None)
+            if plot_curve_to_remove:
+                self.plot_widget.removeItem(plot_curve_to_remove)  # Remove the curve from the plot
+                self.plot_curves.remove(plot_curve_to_remove)  # Remove the curve from the list
 
             # Reset the signal index
             signal.shift_time = 0
             self.current_indices[signal.location] = 0
             print(f"Signal '{signal.name}' removed")
 
-    def updateSignalColor(self, signal: Signal):
-        for plot_curve in self.plot_curves:
-            if plot_curve.opts.get('name') == signal.location:
-                plot_curve.setPen(pg.mkPen(signal.colors[self.id]))
     def updatePlot(self):
         if self.is_playing and self.signals:
             max_time = 0
 
             for signal, plot_curve in zip(self.signals, self.plot_curves):
-                current_index = signal.currentIndex[self.id]
+                if signal.isLive:
+                    current_index = self.current_indices[signal.location]
+                else:
+                    current_index = signal.currentIndex[self.id]
                 time_data = signal.getShitedTime()
                 amplitude_data = signal.data[:, 1]
 
@@ -238,7 +239,7 @@ class Viewer(QWidget):
             self.timeLabel.setText(f"{int(max_time // 60):02}:{int(max_time % 60):02}.{int((max_time % 1) * 1000):03}")
 
             # Adjust the visible range to simulate sliding
-            visible_duration = 1  # Duration of the visible window in seconds
+            visible_duration = .5  # Duration of the visible window in seconds
             time_min = max(0, max_time - visible_duration)  # Ensure the minimum time is never negative
             time_max = max(max_time, visible_duration)  # Extend the range to include the visible duration initially
             self.plot_widget.setXRange(time_min, time_max, padding=0)
@@ -249,18 +250,18 @@ class Viewer(QWidget):
         for plot_curve in self.plot_curves:
             curve_name = plot_curve.opts.get('name')
             print(f"Checking curve: {curve_name}")
-            if curve_name == signal.name:
+            if curve_name == signal.location:
                 plot_curve.setVisible(signal.isShown[self.id])
 
     #button functions
     def play(self):
-        if not self.is_playing:  
+        if not self.is_playing:
             self.is_playing = True
-            self.timer.start(self.plot_speed) 
+            self.timer.start(self.plot_speed)
             print("Viewer is played")
 
     def pause(self):
-        if self.is_playing:  
+        if self.is_playing:
             self.is_playing = False
             self.timer.stop()
             print("Viewer is stopped")
@@ -269,7 +270,7 @@ class Viewer(QWidget):
         print("Viewer is moving 5 seconds forward")
         for signal in self.signals:
             current_index = self.current_indices[signal.location]
-            new_index = current_index + int(self.time_jump / (signal.data[1, 0] - signal.data[0, 0])) 
+            new_index = current_index + int(self.time_jump / (signal.data[1, 0] - signal.data[0, 0]))
             if new_index < len(signal.data):
                 self.current_indices[signal.location] = new_index
             else:
@@ -282,7 +283,7 @@ class Viewer(QWidget):
         print("Viewer is moving 5 seconds backward")
         for signal in self.signals:
             current_index = self.current_indices[signal.location]
-            new_index = current_index - int(self.time_jump / (signal.data[1, 0] - signal.data[0, 0]))  
+            new_index = current_index - int(self.time_jump / (signal.data[1, 0] - signal.data[0, 0]))
             if new_index >= 0:
                 self.current_indices[signal.location] = new_index
             else:
@@ -294,15 +295,15 @@ class Viewer(QWidget):
     def toggleRewind(self):
         self.is_rewinding = not self.is_rewinding
         if self.is_rewinding:
-            self.rewindButton.setStyleSheet(rewindOnButtonStyle)  
+            self.rewindButton.setStyleSheet(rewindOnButtonStyle)
             print("Rewind is ON")
         else:
-            self.rewindButton.setStyleSheet(rewindOffButtonStyle) 
+            self.rewindButton.setStyleSheet(rewindOffButtonStyle)
             print("Rewind is OFF")
         self.updatePlot()
 
     def updatePlotSpeed(self, value):
-        self.plot_speed = max(1, 100 - value)  
+        self.plot_speed = max(1, 100 - value)
         self.timer.setInterval(self.plot_speed)
         print("Speed is changed")
 
@@ -318,7 +319,7 @@ class Viewer(QWidget):
         current_amplitudes=[]
         for signal in self.signals:
             current_index = self.current_indices[signal.location]
-            if current_index < len(signal.data):  
+            if current_index < len(signal.data):
                 current_time = signal.data[current_index, 0]
                 current_times.append(current_time)
 
@@ -342,21 +343,21 @@ class Viewer(QWidget):
         self.plot_widget.setXRange(time_min, time_max, padding=0)
 
 
-    #pan slider functions 
+    #pan slider functions
     def updatePanSlider(self):
         if not self.signals:
             return
-    
+
         max_time = max(signal.data[-1, 0] for signal in self.signals if len(signal.data) > 0)
 
-        slider_position = self.panSlider.value() / 100  
+        slider_position = self.panSlider.value() / 100
 
         time_range_span = self.plot_widget.viewRange()[0][1] - self.plot_widget.viewRange()[0][0]
         time_start = slider_position * (max_time - time_range_span)
-        time_start = max(0, time_start)  
+        time_start = max(0, time_start)
         time_end = time_start + time_range_span
 
-        self.plot_widget.setXRange(time_start, time_end, padding=0)    
+        self.plot_widget.setXRange(time_start, time_end, padding=0)
     
     def startPanUpdate(self):
         if not self.is_panning:
@@ -374,9 +375,9 @@ class Viewer(QWidget):
         time_start, time_end = self.plot_widget.viewRange()[0]
         max_time = max(signal.data[-1, 0] for signal in self.signals if len(signal.data) > 0)
         time_range_adjusted = max_time - (time_end - time_start)
-        if time_range_adjusted > 0: 
+        if time_range_adjusted > 0:
             slider_position = (time_start / time_range_adjusted) * 100
-            self.panSlider.setValue(int(max(0, min(100, slider_position)))) 
+            self.panSlider.setValue(int(max(0, min(100, slider_position))))
         else:
             self.panSlider.setValue(0)
         self.adjustPlotLimits()
@@ -458,18 +459,19 @@ class Viewer(QWidget):
             self.glue_rectangle()        #trial
     # def addNewSignal(self): #Trial , to add multiple signals and test with it
     #     new_signal = Signal()
-    #     new_signal.name = f"Signal {len(self.signals) + 1}" 
-    #     new_signal.location = "E/newFolder" 
-    #     endpoint = np.random.uniform(10, 20) 
-    #     time = np.arange(0, endpoint, 0.1) 
-    #     np.random.seed(len(self.signals))  
-    #     value = np.random.rand(len(time)) * 100 
+    #     new_signal.name = f"Signal {len(self.signals) + 1}"
+    #     new_signal.location = "E/newFolder"
+    #     endpoint = np.random.uniform(10, 20)
+    #     time = np.arange(0, endpoint, 0.1)
+    #     np.random.seed(len(self.signals))
+    #     value = np.random.rand(len(time)) * 100
     #     new_signal.data = np.column_stack((time, value))
     #     new_signal.channels = [1, 2]
-    #     new_signal.colors = ["#D55877", "#76D4D4"] 
+    #     new_signal.colors = ["#D55877", "#76D4D4"]
     #     new_signal.isLive = True
     #     new_signal.isShown = True
-    #     self.addSignal(new_signal) 
+    #     self.addSignal(new_signal)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
@@ -483,7 +485,7 @@ if __name__ == "__main__":
     value = 75 + 5 * np.sin(0.5 * time)
     signal1.data = np.column_stack((time, value))
     signal1.channels = [1, 2]
-    signal1.colors = ["#D55877", "#76D4D4"] 
+    signal1.colors = ["#D55877", "#76D4D4"]
     signal1.isLive = True
     signal1.isShown = True
 
@@ -493,7 +495,7 @@ if __name__ == "__main__":
     time = np.arange(0, 10, 0.1)
     value = 25 + 2 * np.sin(0.3 * time)
     signal2.data = np.column_stack((time, value))
-    signal1.colors = ["#D55877", "#76D4D4"] 
+    signal1.colors = ["#D55877", "#76D4D4"]
     signal1.isLive = True
     signal1.isShown = True
 
@@ -504,4 +506,67 @@ if __name__ == "__main__":
     main.resize(750, 400)
     main.show()
     sys.exit(app.exec_())
+
+
+class LiveViewer(Viewer):
+    def __init__(self):
+        super().__init__()
+
+    def layoutSet(self):
+        self.signalPlotLayout = QVBoxLayout(self.signalViewer)
+        self.titleToolbarLayout = QHBoxLayout()
+        self.titleToolbarLayout.addWidget(self.viewerTitle)
+        self.titleToolbarLayout.addSpacerItem(QSpacerItem(40, 0, QSizePolicy.Expanding, QSizePolicy.Minimum))
+
+
+        self.signalPlotLayout.addLayout(self.titleToolbarLayout)
+        self.signalPlotLayout.addWidget(self.plot_widget)
+
+        mainLayout = QVBoxLayout(self)
+        mainLayout.addWidget(self.signalViewer)
+        self.setLayout(mainLayout)
+        print("Layout set")
+
+    def updatePlot(self):
+        if self.is_playing and self.signals:
+            max_time = 0
+
+            # Loop over the signals and update the plot curves
+            for signal, plot_curve in zip(self.signals, self.plot_curves):
+                # For live signals, use the current index from the signal object
+                if signal.isLive:
+                    current_index = self.current_indices[signal.location]
+                else:
+                    current_index = signal.currentIndex[self.id]
+                signal.shift_time = 0
+                time_data = signal.getShitedTime()  # Get the shifted time data
+                amplitude_data = signal.data[:, 1]  # Get the amplitude data
+
+                # Update the plot curve with data up to the current index
+                if current_index < len(time_data):
+                    plot_curve.setData(time_data[:current_index + 1], amplitude_data[:current_index + 1])
+                    max_time = max(max_time, time_data[current_index])
+                    current_index += 1  # Increment to simulate real-time plotting
+                else:
+                    # Handle edge case: if we reach the end, we either stop or rewind based on state
+                    if self.is_rewinding:
+                        current_index = 0
+                    else:
+                        current_index = len(time_data) - 1
+
+                # Store the updated index for this signal
+                signal.currentIndex[self.id] = current_index
+                self.current_indices[signal.location] = current_index
+
+            # Update the time label based on the maximum time value
+            self.timeLabel.setText(f"{int(max_time // 60):02}:{int(max_time % 60):02}.{int((max_time % 1) * 1000):03}")
+
+            # Adjust the X-range of the plot to simulate sliding of the visible window
+            visible_duration = .01  # Duration of the visible window in seconds
+            time_min = max(time_data[0], max_time - visible_duration)  # Ensure the minimum time is never negative
+            time_max = max_time  # Ensure the range includes the visible duration initially
+            self.plot_widget.setXRange(time_min, time_max, padding=0)
+
+            # Adjust the Y-range to fit the signal data
+            # self.adjustPlotLimits()
 

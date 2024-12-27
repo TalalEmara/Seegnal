@@ -38,9 +38,9 @@ class Properties(QWidget):
         self.colorChannel2Label = QLabel("ch2 color")
         # self.colorChannel2combo = QComboBox()
         self.colorChannel2Input = QPushButton()
-        self.lineThicknessLabel = QLabel("Line thickness")
-        self.thicknessInput = QSpinBox()
-
+        # self.lineThicknessLabel = QLabel("Line thickness")
+        # self.thicknessInput = QSpinBox()
+        #
 
 
         print("Elements created")
@@ -80,24 +80,24 @@ class Properties(QWidget):
                                                 background-color:{self.signal.colors[1]};
                                                 """)
 
-        self.lineThicknessLabel.setStyleSheet("""color: #EFEFEF;
-                                                font-family: Sofia sans;
-                                                font-weight: 400;
-                                                font-size: 14px;
-                                                padding-left: 15px;""")
+        # self.lineThicknessLabel.setStyleSheet("""color: #EFEFEF;
+        #                                         font-family: Sofia sans;
+        #                                         font-weight: 400;
+        #                                         font-size: 14px;
+        #                                         padding-left: 15px;""")
 
-        self.thicknessInput.setButtonSymbols(QSpinBox.NoButtons)
-        self.thicknessInput.setAlignment(Qt.AlignCenter)
-        self.thicknessInput.setStyleSheet("""
-                                                QSpinBox{
-                                                    color: #76D4D4;
-                                                    padding:2px;
-                                                    border: 2px solid #76D4D4;
-                                                    border-radius: 5px; 
-                                                    font-size:16px;
-                                                    font-weight: 600;
-                                                    margin: 0 15px 0 15px ;
-                                                }""")
+        # self.thicknessInput.setButtonSymbols(QSpinBox.NoButtons)
+        # self.thicknessInput.setAlignment(Qt.AlignCenter)
+        # self.thicknessInput.setStyleSheet("""
+        #                                         QSpinBox{
+        #                                             color: #76D4D4;
+        #                                             padding:2px;
+        #                                             border: 2px solid #76D4D4;
+        #                                             border-radius: 5px;
+        #                                             font-size:16px;
+        #                                             font-weight: 600;
+        #                                             margin: 0 15px 0 15px ;
+        #                                         }""")
 
 
 
@@ -120,10 +120,10 @@ class Properties(QWidget):
         self.mainLayout.addLayout(self.color1Layout)
         self.mainLayout.addLayout(self.color2Layout)
         self.mainLayout.addSpacing(10)
-        self.mainLayout.addWidget(self.lineThicknessLabel)
-        self.mainLayout.addWidget(self.thicknessInput)
-
+        # self.mainLayout.addWidget(self.lineThicknessLabel)
+        # self.mainLayout.addWidget(self.thicknessInput)
         self.mainLayout.addStretch()
+
 
         self.setLayout(self.mainLayout)
         print("layout set")

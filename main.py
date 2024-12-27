@@ -7,7 +7,7 @@ from Properties import Properties
 from Selector import Selector
 from  Signal import Signal
 from Styles.toolBarStyle import linkedButtonOffStyle, linkedButtonOnStyle, rewindOnButtonStyle, rewindOffButtonStyle
-from Viewer import Viewer
+from Viewer import Viewer, LiveViewer
 from Toolbar import ToolBar
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QApplication, QVBoxLayout, QHBoxLayout, QPushButton, QWidget, QTabWidget, \
@@ -77,7 +77,7 @@ class main(QMainWindow):
 
         self.propertiesPanel = Properties()
 
-        self.liveViewer = Viewer()
+        self.liveViewer = LiveViewer()
         self.liveViewer.viewerTitle.setText("Live")
 
         print("Elements created")

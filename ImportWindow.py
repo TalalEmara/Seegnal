@@ -44,7 +44,7 @@ class ImportWindow(QMainWindow):
 
         self.liveTab = QWidget()
         self.liveTabLabel = QLabel("Live Signal")
-        self.liveInput = QLineEdit()
+        self.liveInput = QLineEdit('https://services.swpc.noaa.gov/json/planetary_k_index_1m.json')
 
         self.plotButton = QPushButton("Plot")
         print("Elements created")
