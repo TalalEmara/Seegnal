@@ -258,10 +258,11 @@ class main(QMainWindow):
         signal.hideToggled.connect(self.handleHideToggeled)
         if signal.isLive:
             self.liveViewer.addSignal(signal)
-        elif signal.channels[0] == 1:
-            self.viewerChannel1.addSignal(signal)
-        elif signal.channels[1] == 1:
-            self.viewerChannel2.addSignal(signal)
+        else:
+            if signal.channels[0] == 1:
+                self.viewerChannel1.addSignal(signal)
+            if signal.channels[1] == 1:
+                self.viewerChannel2.addSignal(signal)
         self.updateSelectors()
         print(f"Signal added to main signals array: {signal} channels: {signal.channels}")
 
@@ -312,6 +313,7 @@ class main(QMainWindow):
 
     def connectGlue(self):
         """Connect glue functionality to the viewers."""
+
 
         # Access the selected data from both viewers
         frame1_x, frame1_y = zip(*self.viewerChannel1.get_selected_data())

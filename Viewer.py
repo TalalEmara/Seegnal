@@ -273,28 +273,38 @@ class Viewer(QWidget):
             print("Viewer is stopped")
 
     def forward(self):
-        print("Viewer is moving 5 seconds forward")
+        """Move forward in the signal by time_jump."""
         for signal in self.signals:
             current_index = self.current_indices[signal.location]
-            new_index = current_index + int(self.time_jump / (signal.data[1, 0] - signal.data[0, 0]))
-            if new_index < len(signal.data):
-                self.current_indices[signal.location] = new_index
-            else:
-                self.current_indices[signal.location] = len(signal.data) - 1
-                print("Reached the end of the signal")
+
+            # Compute the time jump in terms of indices
+            time_step = signal.data[1, 0] - signal.data[0, 0]  # Assume uniform time step
+            jump_indices = int(self.time_jump / time_step) if time_step > 0 else 0
+
+            # Update the index, ensuring it doesn't exceed the array length
+            new_index = min(current_index + jump_indices, len(signal.data) - 1)
+
+            # Update the current indices and signal index
+            self.current_indices[signal.location] = new_index
+            signal.currentIndex[self.id] = new_index  # Make sure to update the signal's index too
 
         self.updatePlot()
 
     def backward(self):
-        print("Viewer is moving 5 seconds backward")
+        """Move backward in the signal by time_jump."""
         for signal in self.signals:
             current_index = self.current_indices[signal.location]
-            new_index = current_index - int(self.time_jump / (signal.data[1, 0] - signal.data[0, 0]))
-            if new_index >= 0:
-                self.current_indices[signal.location] = new_index
-            else:
-                self.current_indices[signal.location] = 0
-                print("At the start of the signal")
+
+            # Compute the time jump in terms of indices
+            time_step = signal.data[1, 0] - signal.data[0, 0]  # Assume uniform time step
+            jump_indices = int(self.time_jump / time_step) if time_step > 0 else 0
+
+            # Update the index, ensuring it doesn't go below 0
+            new_index = max(current_index - jump_indices, 0)
+
+            # Update the current indices and signal index
+            self.current_indices[signal.location] = new_index
+            signal.currentIndex[self.id] = new_index  # Make sure to update the signal's index too
 
         self.updatePlot()
 

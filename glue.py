@@ -180,12 +180,12 @@ class GlueWindow(QMainWindow):
 
     def forward(self):
         # Move the second signal forward
-        self.signal2[0] = self.signal2[0] + 1
+        self.signal2[0] = self.signal2[0]+0.1
         self.update_plots()
 
     def backward(self):
         # Move the second signal backward
-        self.signal2[0] = self.signal2[0] - 1
+        self.signal2[0] = self.signal2[0] - 0.1
         self.update_plots()
 
     def update_plots(self):
