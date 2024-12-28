@@ -149,7 +149,7 @@ class main(QMainWindow):
         self.toolbar.backwardButton.clicked.connect(self.backlink)
         self.toolbar.forwardButton.clicked.connect(self.forwardlink)
         self.toolbar.linkedButton.clicked.connect(self.toggleLinkedButton)
-
+        self.toolbar.speedSlider.valueChanged.connect(self.update_speed)
         self.toolbar.rewindButton.clicked.connect(self.toggleRewindButton)
         self.viewerChannel1.rangeChanged.connect(lambda plot_widget: self.sync_pan(plot_widget))
         self.viewerChannel2.rangeChanged.connect(lambda plot_widget: self.sync_pan(plot_widget))
@@ -178,6 +178,9 @@ class main(QMainWindow):
             self.viewerChannel2.pauseButton.setEnabled(False)
             self.viewerChannel1.playButton.setEnabled(False)
             self.viewerChannel2.playButton.setEnabled(False)
+            self.viewerChannel1.speedSlider.setEnabled(False)
+            self.viewerChannel2.speedSlider.setEnabled(False)
+
 
 
         else:
@@ -196,7 +199,8 @@ class main(QMainWindow):
             self.viewerChannel2.pauseButton.setEnabled(True)
             self.viewerChannel1.playButton.setEnabled(True)
             self.viewerChannel2.playButton.setEnabled(True)
-
+            self.viewerChannel1.speedSlider.setEnabled(True)
+            self.viewerChannel2.speedSlider.setEnabled(True)
 
     def backlink(self):
         if self.toolbar.isLinked:
@@ -242,6 +246,11 @@ class main(QMainWindow):
                 self.viewerChannel2.plot_widget.setXRange(time_min, time_max, padding=0)
             elif source_viewer == self.viewerChannel2.plot_widget:
                 self.viewerChannel1.plot_widget.setXRange(time_min, time_max, padding=0)
+    def update_speed(self, speed_value):
+        if self.toolbar.isLinked:
+            self.viewerChannel1.updatePlotSpeed(speed_value)
+            self.viewerChannel2.updatePlotSpeed(speed_value)
+
     def connectImport(self):
         self.toolbar.importButton.clicked.connect(self.openImportWindow)
 
