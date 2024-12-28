@@ -184,7 +184,7 @@ class Selector(QWidget):
 
         print(signal.channels)
     def toggleHide(self, button, signal):
-        if signal.isShown:
+        if signal.isShown[self.selectorId]:
             button.setIcon(QIcon("Assets/Selector/hidden.png"))
         else:
             button.setIcon(QIcon("Assets/Selector/shown.png"))

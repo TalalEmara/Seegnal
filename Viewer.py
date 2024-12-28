@@ -249,6 +249,7 @@ class Viewer(QWidget):
             time_min = max(0, max_time - visible_duration)  # Ensure the minimum time is never negative
             time_max = max(max_time, visible_duration)  # Extend the range to include the visible duration initially
             self.plot_widget.setXRange(time_min, time_max, padding=0)
+            self.plot_widget.setLimits(xMin = 0 ,xMax=time_max)
 
             self.adjustPlotLimits()
 
@@ -356,7 +357,7 @@ class Viewer(QWidget):
 
 
         # Set the x-range of the plot widget
-        self.plot_widget.setXRange(time_min, time_max, padding=0)
+        # self.plot_widget.setXRange(time_min, time_max, padding=0)
 
 
     #pan slider functions
