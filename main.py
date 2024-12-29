@@ -348,7 +348,7 @@ class main(QMainWindow):
 
         print("Glue window is connected")
     def connectPolar(self):
-        self.toolbar.polarButton.clicked.connect(lambda: NonRectangularWindow().show())
+
         print("Polar window is connected")
     def ConnectLive(self):
         print("show live Signal")

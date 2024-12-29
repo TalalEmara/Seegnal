@@ -32,10 +32,10 @@ class Properties(QWidget):
     def createUIElements(self):
         self.propertiesLabel = QLabel("Properties")
         self.signalNameLabel = QLabel(self.signal.name) #should be signal name
-        self.colorChannel1Label = QLabel("ch1 color")
+        self.colorChannel1Label = QLabel("Channel 1 color")
         # self.colorChannel1combo = QComboBox()
         self.colorChannel1Input = QPushButton()
-        self.colorChannel2Label = QLabel("ch2 color")
+        self.colorChannel2Label = QLabel("Channel 2 color")
         # self.colorChannel2combo = QComboBox()
         self.colorChannel2Input = QPushButton()
         # self.lineThicknessLabel = QLabel("Line thickness")

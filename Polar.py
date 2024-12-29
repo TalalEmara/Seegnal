@@ -268,7 +268,7 @@ QComboBox QAbstractItemView {
         self.canvas.draw()
 
     def init_plot(self):
-        self.polar_line, = self.canvas.ax.plot([], [], marker='.', color="#76D4D4")
+        self.polar_line, = self.canvas.ax.plot([], [], marker='', color="#76D4D4")
         # self.canvas.ax.set_title('Polar Plot of Signal Data')
         if self.data is not None:
             r_min = np.min(self.data[:, 1])

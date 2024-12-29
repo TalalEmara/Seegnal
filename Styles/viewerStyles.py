@@ -10,6 +10,7 @@ QPushButton{
     font-size: 18px;
     border: 3px solid #76D4D4;
     border-radius: 10px;
+    padding:2px;
 }
 """
 rewindOffButtonStyle = """

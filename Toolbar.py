@@ -4,6 +4,8 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QHBoxLayout, QApplication, QMainWindow, QVBoxLayout, \
     QGroupBox, QSlider
+
+from Polar import NonRectangularWindow
 from Styles.toolBarStyle import labelStyle, signalControlButtonStyle, groupBoxStyle,rewindOnButtonStyle,rewindOffButtonStyle,linkedButtonOffStyle,linkedButtonOnStyle
 
 
@@ -170,6 +172,7 @@ class ToolBar(QWidget):
 
 
     def connectingUI(self):
+        self.initializePolar()
         # self.rewindButton.clicked.connect(self.toggleRewindButton)
         # self.linkedButton.clicked.connect(self.toggleLinkedButton)
         print("UI panels is connected to each other")
@@ -178,7 +181,7 @@ class ToolBar(QWidget):
         print("open import window")
 
     def initializePolar(self):
-        print("open import window")
+        self.polarButton.clicked.connect(lambda: NonRectangularWindow().show())
 
     def linkViewers(self, viewer1, viewer2):
         print("link viewer")
