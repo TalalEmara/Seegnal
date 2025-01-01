@@ -1,10 +1,9 @@
 
 <h1 align="center">
-    <img alt="project" title="#About" src="./assets/banner.jpg" />
+    <img alt="project" title="#About" src="Readme/main.gif" />
 </h1>
 
 <h1 align="center">Seegnal</h1>
-
 <h3 align="center">Multi-Port, Multi-Channel Signal Viewer</h3>
 
 <h4 align="center"> 
@@ -29,20 +28,28 @@
 ## Features
 
 - **Multiple Signal Sources**: Open different medical signal files or connect to real-time signal sources.
+
+  
+  ![ ](Readme/Multiple.png)
+- **Plotting Live Signals**:
+  
+  ![ ](Readme/live.gif)
 - **Interactive Graphs**: Two identical graphs to display signals, linked for synchronized zooming and panning.
+- **Polar graph**: 
+
+
+  ![ ](Readme/Polar.png)
 - **Cine Mode**: View signals in real-time similar to ICU monitors.
 - **Signal Manipulation**: Change colors, add labels, zoom, and more.
 - **Signal Glue**: Merge parts of signals with customizable parameters.
+
+  ![ ](Readme/glue1.png)
+ <p align="center">
+  <img src="Readme/glue2.png" width="500" style="display: inline-block;" alt="Signal Glue 1"/>
+  <img src="Readme/glue3.png" width="500" style="display: inline-block;" alt="Signal Glue 2"/>
+</p>
+
 - **Exporting & Reporting**: Generate PDF reports with statistical analysis of the signals.
-
-### Visual Features:
-- **Example Signal Display**:  
-  ![Signal Display](./assets/signal-display.gif)
-  
-- **Signal Manipulation Demo**:  
-  ![Signal Manipulation](./assets/signal-manipulation.gif)
-
----
 
 ## Tech Stack
 
