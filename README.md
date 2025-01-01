@@ -111,7 +111,7 @@ This will start the **Seegnal** application locally.
 
 ## Developers
 
-| [**Talal Emara**](https://github.com/TalalEmara) | [**Meram Mahmoud**](https://github.com/Meram-Mahmoud) | [**Maya Mohammed**](https://github.com/Mayamohamed207) | [**Nouran Hani**](https://github.com/author4) |
+| [**Talal Emara**](https://github.com/TalalEmara) | [**Meram Mahmoud**](https://github.com/Meram-Mahmoud) | [**Maya Mohammed**](https://github.com/Mayamohamed207) | [**Nouran Hani**](https://github.com/Nouran-Hani) |
 |:------------------------------------------:|:------------------------------------------:|:------------------------------------------:|:------------------------------------------:|
 
 ---
