@@ -15,11 +15,10 @@
  <a href="#features">Features</a> •
  <a href="#how-it-works">How it works</a> • 
  <a href="#tech-stack">Tech Stack</a> •  
- <a href="#author">Author</a> • 
- <a href="#license">License</a>
+ <a href="#developers">Author</a>
 </p>
 
-## About
+# About
 
 **Seegnal** is a desktop application developed using Python and PyQt5 to visualize multi-port, multi-channel signals. This tool is ideal for users needing to monitor and analyze medical signals like ECG, EEG, and EMG with various control features including zoom, pan, and more.
 
@@ -110,9 +109,9 @@ This will start the **Seegnal** application locally.
 
 ---
 
-## Authors
+## Developers
 
-| [**Talal Emara**](https://github.com/author1) | [**Meram Mahmoud**](https://github.com/author2) | [**Maya Mohammed**](https://github.com/author3) | [**Nouran Hani**](https://github.com/author4) |
+| [**Talal Emara**](https://github.com/TalalEmara) | [**Meram Mahmoud**](https://github.com/Meram-Mahmoud) | [**Maya Mohammed**](https://github.com/Mayamohamed207) | [**Nouran Hani**](https://github.com/author4) |
 |:------------------------------------------:|:------------------------------------------:|:------------------------------------------:|:------------------------------------------:|
 
 ---
