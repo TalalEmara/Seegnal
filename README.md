@@ -15,7 +15,7 @@
  <a href="#features">Features</a> •
  <a href="#how-it-works">How it works</a> • 
  <a href="#tech-stack">Tech Stack</a> •  
- <a href="#developers">Author</a>
+ <a href="#developers">Developers</a>
 </p>
 
 # About
